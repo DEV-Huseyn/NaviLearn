@@ -4,7 +4,6 @@ name: Deploy React to GitHub Pages
 on:
   push:
     branches: [main]
-
   workflow_dispatch:
 
 permissions:
@@ -42,6 +41,7 @@ jobs:
           path: ./dist
 
   deploy:
+    needs: build
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
