@@ -38,23 +38,33 @@ const Course = ({ setIsLoggedIn }) => {
         navigate('/sign__up')
     }
 
-    // Получение пользователей
-    const getUsers = async () => {
-        try {
-            const response = await axios.get('/api/user/users.php', {
+   const API = "https://dcn481.dcn.tj/Novilearn/api";
+
+// Получение пользователей
+const getUsers = async () => {
+    try {
+        const response = await axios.get(
+            `${API}/user/users.php`,
+            {
                 headers: {
-                    Authorization: `Bearer ${localStorage.getItem('token')}`
+                    Authorization: `Bearer ${localStorage.getItem('token')}`,
+                    Accept: 'application/json'
                 }
-            })
-
-            if (response.data.success) {
-                setUsers(response.data.data.users || [])
             }
+        );
 
-        } catch (error) {
-            console.error('Ошибка загрузки пользователей:', error)
+        if (response.data.success) {
+            setUsers(response.data.data.users || []);
         }
+
+    } catch (error) {
+        console.error(
+            'Ошибка загрузки пользователей:',
+            error.response?.status,
+            error.response?.data || error.message
+        );
     }
+};
 
     useEffect(() => {
         getUsers()
