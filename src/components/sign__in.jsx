@@ -11,8 +11,8 @@ const Sign__in = ({ setIsLoggedIn }) => {
 
     const navigate = useNavigate()
 
-    const API = "/api";
-
+    const API = "https://dcn481.dcn.tj/Novilearn/api";
+    
     const signupFunc = async (e) => {
         e.preventDefault();
     

@@ -13,7 +13,7 @@ const Sign__up = ({ setIsLoggedIn }) => {
 
 // const API = "http://dcn481.dcn.tj/Novilearn/api"
 
-const API = "/api"
+const API = "https://dcn481.dcn.tj/Novilearn/api";
 
 const userSearch = async (e) => {
     e.preventDefault()
