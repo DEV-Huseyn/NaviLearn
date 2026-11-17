@@ -239,7 +239,7 @@ if (isLocked) {
 
         // Переходим к следующему уроку
         if (nextLesson) {
-            navigate(`/css/lesson/${nextLesson.id}`)
+            navigate(`/css`)
         } else {
             // Если это последний урок курса
             navigate('/course')
