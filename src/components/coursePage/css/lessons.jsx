@@ -21,7 +21,7 @@
                 if (nextLesson) {
                     navigate(`/css/lesson/${nextLesson.id}`)
                 } else {
-                    navigate('/course')
+                    navigate('/css')
                 }
             }
         }}
