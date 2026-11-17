@@ -133,18 +133,6 @@ function LessonsJS() {
     setCompleted(true)
   }
 
-  const nextLesson = () => {
-    if (!completed) return
-
-    const next = lessons[lessonIndex + 1]
-
-    if (next) {
-      navigate(`/javascript/lesson/${next.id}`)
-    } else {
-      navigate('/javascript')
-    }
-  }
-
   const totalXP = lesson.tasks.reduce(
     (total, task) => total + (results[task.id] ? task.xpReward : 0),
     0

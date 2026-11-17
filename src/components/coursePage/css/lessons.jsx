@@ -259,13 +259,6 @@ function Lessons() {
 
         localStorage.setItem(storageKey, 'true')
 
-        const nextLesson = lessons[lessonIndex + 1]
-
-        if (nextLesson) {
-            navigate(`/css/lesson/${nextLesson.id}`)
-        } else {
-            navigate('/css')
-        }
     }
 
     const htmlTemplate = lesson.htmlTemplate || `
