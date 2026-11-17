@@ -14,14 +14,9 @@ function LessonsJS() {
     )
 
     const lesson = lessons[lessonIndex]
-
-    // Предыдущий и следующий урок
     const previousLesson = lessons[lessonIndex - 1]
-    const nextLessonData = lessons[lessonIndex + 1]
 
-    // Проверка блокировки урока
-    const isLocked =
-        previousLesson &&
+    const isLocked = previousLesson &&
         localStorage.getItem(
             `js_lesson_${previousLesson.id}_completed`
         ) !== 'true'
@@ -32,7 +27,6 @@ function LessonsJS() {
     const [showHint, setShowHint] = useState({})
     const [errors, setErrors] = useState({})
 
-    // Загрузка сохранённого прогресса
     useEffect(() => {
         if (!lesson) {
             navigate('/javascript')
@@ -61,12 +55,11 @@ function LessonsJS() {
 
     if (!lesson) return null
 
-    // Экран блокировки
+    // Блокировка урока
     if (isLocked) {
         return (
             <div className="min-h-screen bg-slate-950 text-white flex items-center justify-center p-6">
                 <div className="bg-slate-900 border border-slate-800 rounded-2xl p-8 max-w-md w-full text-center">
-
                     <h2 className="text-2xl font-bold mb-4">
                         🔒 Урок закрыт
                     </h2>
@@ -81,7 +74,6 @@ function LessonsJS() {
                     >
                         Вернуться к урокам
                     </button>
-
                 </div>
             </div>
         )
@@ -99,6 +91,7 @@ function LessonsJS() {
         }))
     }
 
+    // Проверка задания
     const checkTask = task => {
         const answer = answers[task.id]
 
@@ -118,7 +111,9 @@ function LessonsJS() {
                 }))
                 return
             }
-        } else if (task.type === 'code' || task.type === 'project') {
+        }
+
+        if (task.type === 'code' || task.type === 'project') {
             if (!answer || !answer.trim()) {
                 setErrors(prev => ({
                     ...prev,
@@ -127,10 +122,16 @@ function LessonsJS() {
                 return
             }
 
-            const code = answer.toLowerCase()
+            const normalize = value =>
+                value
+                    .toLowerCase()
+                    .replace(/\s+/g, '')
+                    .replace(/;/g, '')
+
+            const code = normalize(answer)
 
             const isCorrect = (task.checks || []).every(check =>
-                code.includes(check.toLowerCase())
+                code.includes(normalize(check))
             )
 
             if (!isCorrect) {
@@ -164,16 +165,22 @@ function LessonsJS() {
         task => results[task.id]
     )
 
+    // Завершение урока
     const finishLesson = () => {
         if (!allTasksCompleted) return
 
-        localStorage.setItem(`js_lesson_${id}_completed`, 'true')
+        localStorage.setItem(
+            `js_lesson_${id}_completed`,
+            'true'
+        )
+
         setCompleted(true)
     }
 
-const nextLesson = () => {
-    navigate('/javascript')
-}
+    // ВСЕГДА возвращаемся к списку JavaScript
+    const backToLessons = () => {
+        navigate('/javascript', { replace: true })
+    }
 
     const completedCount = Object.values(results).filter(Boolean).length
 
@@ -183,15 +190,13 @@ const nextLesson = () => {
 
     return (
         <div className="min-h-screen bg-slate-950 text-white px-4 py-8 sm:px-6 lg:px-8">
-
             <div className="max-w-5xl mx-auto">
 
                 {/* HEADER */}
-
                 <div className="mb-8 rounded-2xl border border-blue-900/50 bg-gradient-to-br from-slate-900 to-blue-950 p-6 sm:p-8">
 
                     <button
-                        onClick={() => navigate('/javascript')}
+                        onClick={backToLessons}
                         className="mb-7 rounded-xl border border-blue-800 bg-blue-900/40 px-4 py-2.5 text-sm font-medium text-blue-300 transition hover:bg-blue-700 hover:text-white cursor-pointer"
                     >
                         ← Назад к курсу
@@ -222,7 +227,6 @@ const nextLesson = () => {
                 </div>
 
                 {/* THEORY */}
-
                 <section className="mb-8 rounded-2xl border border-slate-800 bg-slate-900 p-5 sm:p-7">
 
                     <h2 className="mb-6 flex items-center gap-3 text-xl font-bold sm:text-2xl">
@@ -230,7 +234,6 @@ const nextLesson = () => {
                     </h2>
 
                     <div className="space-y-4">
-
                         {lesson.theory.map((item, index) => (
                             <div
                                 key={index}
@@ -245,12 +248,10 @@ const nextLesson = () => {
                                 </p>
                             </div>
                         ))}
-
                     </div>
                 </section>
 
                 {/* EXAMPLE */}
-
                 {lesson.example && (
                     <section className="mb-8 rounded-2xl border border-slate-800 bg-slate-900 p-5 sm:p-7">
 
@@ -261,12 +262,10 @@ const nextLesson = () => {
                         <pre className="overflow-x-auto rounded-xl border border-slate-700 bg-[#080e1b] p-5 text-sm leading-7 text-cyan-300">
                             <code>{lesson.example}</code>
                         </pre>
-
                     </section>
                 )}
 
                 {/* PRACTICE */}
-
                 <section className="mb-8 rounded-2xl border border-slate-800 bg-slate-900 p-5 sm:p-7">
 
                     <h2 className="mb-6 flex items-center gap-3 text-xl font-bold sm:text-2xl">
@@ -274,16 +273,13 @@ const nextLesson = () => {
                     </h2>
 
                     <div className="space-y-6">
-
                         {lesson.tasks.map((task, index) => (
-
                             <div
                                 key={task.id}
                                 className="rounded-2xl border border-slate-700 bg-slate-800/70 p-5 transition hover:border-blue-500/50 sm:p-6"
                             >
 
                                 <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-
                                     <h3 className="text-lg font-bold text-white">
                                         Задание {index + 1}: {task.title}
                                     </h3>
@@ -293,7 +289,6 @@ const nextLesson = () => {
                                             ✓ Выполнено
                                         </span>
                                     )}
-
                                 </div>
 
                                 <p className="mb-5 whitespace-pre-line text-sm leading-7 text-slate-300 sm:text-base">
@@ -301,36 +296,29 @@ const nextLesson = () => {
                                 </p>
 
                                 {/* CHOICE */}
-
                                 {task.type === 'choice' && (
                                     <div className="mb-5 flex flex-col gap-3">
-
                                         {task.options.map((option, optionIndex) => (
-
                                             <button
                                                 key={optionIndex}
                                                 onClick={() => saveAnswer(task.id, optionIndex)}
                                                 disabled={results[task.id]}
-                                                className={`w-full rounded-xl border p-4 text-left text-sm transition cursor-pointer disabled:cursor-not-allowed disabled:opacity-60
-                                                    ${answers[task.id] === optionIndex
+                                                className={`w-full rounded-xl border p-4 text-left text-sm transition cursor-pointer disabled:cursor-not-allowed disabled:opacity-60 ${
+                                                    answers[task.id] === optionIndex
                                                         ? 'border-blue-500 bg-blue-600/20 text-blue-300'
                                                         : 'border-slate-700 bg-slate-900 text-slate-300 hover:border-blue-500 hover:bg-slate-700/70'
-                                                    }`}
+                                                }`}
                                             >
                                                 <span className="mr-3 font-bold text-blue-400">
                                                     {String.fromCharCode(65 + optionIndex)}.
                                                 </span>
-
                                                 {option}
                                             </button>
-
                                         ))}
-
                                     </div>
                                 )}
 
                                 {/* CODE / PROJECT */}
-
                                 {(task.type === 'code' || task.type === 'project') && (
                                     <div className="mb-5">
 
@@ -353,12 +341,10 @@ const nextLesson = () => {
                                             spellCheck={false}
                                             className="w-full resize-y rounded-xl border border-slate-700 bg-[#080e1b] p-5 font-mono text-sm leading-7 text-cyan-300 outline-none transition placeholder:text-slate-600 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10 disabled:opacity-60"
                                         />
-
                                     </div>
                                 )}
 
                                 {/* ERROR */}
-
                                 {errors[task.id] && (
                                     <div className="mb-4 flex items-start gap-3 rounded-xl border border-red-500/30 bg-red-500/10 p-4 text-sm text-red-400">
                                         <span>⚠️</span>
@@ -367,7 +353,6 @@ const nextLesson = () => {
                                 )}
 
                                 {/* HINT */}
-
                                 {showHint[task.id] && (
                                     <div className="mb-4 rounded-xl border border-yellow-500/30 bg-yellow-500/10 p-4 text-sm leading-6 text-yellow-300">
                                         💡 {task.hint || 'Попробуй ещё раз и внимательно прочитай условие.'}
@@ -375,7 +360,6 @@ const nextLesson = () => {
                                 )}
 
                                 {/* ACTIONS */}
-
                                 <div className="flex flex-col gap-3 sm:flex-row">
 
                                     <button
@@ -395,38 +379,33 @@ const nextLesson = () => {
                                     >
                                         {results[task.id] ? '✓ Выполнено' : 'Проверить ответ'}
                                     </button>
-
                                 </div>
 
                                 {/* SUCCESS */}
-
                                 {results[task.id] && (
                                     <div className="mt-4 rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-4 text-sm font-medium text-emerald-400">
                                         ✓ Отлично! Задание выполнено.
                                     </div>
                                 )}
-
                             </div>
-
                         ))}
-
                     </div>
                 </section>
 
                 {/* FOOTER */}
-
                 <section className="rounded-2xl border border-slate-800 bg-slate-900 p-6 text-center sm:p-8">
 
                     <div className="mb-5 flex flex-wrap items-center justify-center gap-3">
 
                         <span className="rounded-xl border border-slate-700 bg-slate-800 px-4 py-3 text-sm text-slate-300">
-                            Выполнено: <strong className="text-white">{completedCount} / {lesson.tasks.length}</strong>
+                            Выполнено: <strong className="text-white">
+                                {completedCount} / {lesson.tasks.length}
+                            </strong>
                         </span>
 
                         <span className="rounded-xl border border-yellow-500/20 bg-yellow-500/10 px-4 py-3 text-sm font-bold text-yellow-400">
                             🏆 {lesson.exp} EXP
                         </span>
-
                     </div>
 
                     {!completed && (
@@ -441,12 +420,10 @@ const nextLesson = () => {
 
                     {completed && (
                         <button
-                            onClick={nextLesson}
+                            onClick={backToLessons}
                             className="w-full max-w-sm rounded-xl bg-gradient-to-r from-emerald-600 to-green-500 px-7 py-4 font-bold text-white shadow-lg shadow-emerald-900/20 transition hover:-translate-y-0.5 hover:from-emerald-500 hover:to-green-400 cursor-pointer"
                         >
-                            {lessonIndex === lessons.length - 1
-                                ? 'Завершить курс ✓'
-                                : 'Следующий урок →'}
+                            Вернуться к урокам ✓
                         </button>
                     )}
 
@@ -455,9 +432,7 @@ const nextLesson = () => {
                             Выполни все задания, чтобы завершить урок.
                         </p>
                     )}
-
                 </section>
-
             </div>
         </div>
     )
