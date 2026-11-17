@@ -9,6 +9,8 @@ import HtmlPage from './components/coursePage/html/html'
 import CssPage from './components/coursePage/css/css'
 import JavascriptPage from './components/coursePage/js/javascript'
 import Lesson from './components/coursePage/html/lesson'
+import Css from './components/coursePage/css/css'
+import Lessons from './components/coursePage/lessons'
 
 function App() {
 
@@ -46,6 +48,18 @@ const [isLoggedIn, setIsLoggedIn] = useState(Boolean(localStorage.getItem('token
         path="/html"
         element={isLoggedIn ? <HtmlPage /> : <Navigate to="/sign__in" replace />}
       />
+
+      <Route path="/css" element={<Css />} />
+
+    <Route
+        path="/css/lesson/:id"
+        element={<Lessons course={cssCourse} />}
+    />
+          
+    <Route
+        path="/html/lesson/:id"
+        element={<Lessons course={htmlCourse} />}
+    />
       
       <Route
         path="/forgot__pasword"
