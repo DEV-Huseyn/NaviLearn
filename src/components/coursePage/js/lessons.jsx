@@ -171,14 +171,9 @@ function LessonsJS() {
         setCompleted(true)
     }
 
-    // Переход к следующему уроку
-    const nextLesson = () => {
-        if (nextLessonData) {
-            navigate(`/javascript/lesson/${nextLessonData.id}`)
-        } else {
-            navigate('/course')
-        }
-    }
+const nextLesson = () => {
+    navigate('/javascript')
+}
 
     const completedCount = Object.values(results).filter(Boolean).length
 

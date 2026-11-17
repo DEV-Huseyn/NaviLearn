@@ -221,30 +221,22 @@ if (isLocked) {
         tasks.length > 0 &&
         tasks.every(item => completedTasks.includes(item.id))
 
-    // Переход к следующему заданию или уроку
-    const handleNext = () => {
-        if (!isCorrect || !task) return
+   const handleNext = () => {
+    if (!isCorrect || !task) return
 
-        // Если есть следующее задание в этом уроке
-        if (taskIndex < tasks.length - 1) {
-            setTaskIndex(prev => prev + 1)
-            return
-        }
-
-        // Последнее задание: проверяем весь урок
-        if (!allTasksCompleted) return
-
-        // Отмечаем урок завершённым
-        localStorage.setItem(storageKey, 'true')
-
-        // Переходим к следующему уроку
-        if (nextLesson) {
-            navigate(`/css`)
-        } else {
-            // Если это последний урок курса
-            navigate('/course')
-        }
+    if (taskIndex < tasks.length - 1) {
+        setTaskIndex(prev => prev + 1)
+        return
     }
+
+    if (!allTasksCompleted) return
+
+    // Отмечаем урок завершённым
+    localStorage.setItem(storageKey, 'true')
+
+    // Возвращаемся к списку CSS
+    navigate('/css')
+}
 
     // HTML для предпросмотра CSS
     const htmlTemplate = `
