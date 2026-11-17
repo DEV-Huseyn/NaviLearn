@@ -1,147 +1,315 @@
 
 import React, { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router'
-import jsCourse from './js.json'
+import javascriptCourse from './js.json'
 
 function LessonsJS() {
   const { id } = useParams()
   const navigate = useNavigate()
 
-  const lessons = jsCourse.modules.flatMap(module => module.lessons)
-  const lessonIndex = lessons.findIndex(item => item.id === id)
+  const course = javascriptCourse.course
+  const lessons = course.modules.flatMap(module => module.lessons)
+
+  const lessonIndex = lessons.findIndex(
+    item => item.id === Number(id)
+  )
+
   const lesson = lessons[lessonIndex]
 
-  const [code, setCode] = useState('')
-  const [isCompleted, setIsCompleted] = useState(false)
+  const [answers, setAnswers] = useState({})
+  const [results, setResults] = useState({})
+  const [completed, setCompleted] = useState(false)
 
-  const storageKey = `navilearn-js-${id}`
+  const [showHint, setShowHint] = useState({})
+  const [errors, setErrors] = useState({})
 
   useEffect(() => {
-    setCode(localStorage.getItem(`${storageKey}-code`) || '')
-    setIsCompleted(localStorage.getItem(storageKey) === 'true')
+    if (!lesson) {
+      navigate('/javascript')
+      return
+    }
+
+    if (lessonIndex > 0) {
+      const previousLesson = lessons[lessonIndex - 1]
+      const previousCompleted = localStorage.getItem(
+        `js_lesson_${previousLesson.id}_completed`
+      )
+
+      if (previousCompleted !== 'true') {
+        navigate(`/javascript/lesson/${previousLesson.id}`)
+      }
+    }
+
+    setAnswers({})
+    setResults({})
+    setShowHint({})
+    setErrors({})
+    setCompleted(
+      localStorage.getItem(`js_lesson_${id}_completed`) === 'true'
+    )
   }, [id])
 
-  if (!lesson) {
-    return <div className="p-8 text-white">Урок не найден</div>
+  if (!lesson) return null
+
+  const saveAnswer = (taskId, value) => {
+    setAnswers(prev => ({
+      ...prev,
+      [taskId]: value
+    }))
+
+    setErrors(prev => ({
+      ...prev,
+      [taskId]: ''
+    }))
   }
 
-  const previousLesson = lessons[lessonIndex - 1]
-  const isLocked =
-    previousLesson &&
-    localStorage.getItem(`navilearn-js-${previousLesson.id}`) !== 'true'
+  const checkTask = task => {
+    const answer = answers[task.id]
 
-  if (isLocked) {
-    return (
-      <div className="min-h-screen bg-slate-950 text-white flex flex-col items-center justify-center p-6">
-        <h2 className="text-2xl font-bold mb-3">Урок заблокирован</h2>
-        <p className="text-gray-400 mb-5">
-          Сначала заверши предыдущий урок.
-        </p>
-        <button
-          onClick={() => navigate('/javascript')}
-          className="bg-yellow-500 text-black px-6 py-3 rounded-xl font-semibold"
-        >
-          Назад к курсу
-        </button>
-      </div>
-    )
+    if (task.type === 'choice') {
+      if (answer === undefined || answer === '') {
+        setErrors(prev => ({
+          ...prev,
+          [task.id]: 'Выбери один ответ!'
+        }))
+        return
+      }
+
+      if (Number(answer) !== task.answer) {
+        setErrors(prev => ({
+          ...prev,
+          [task.id]: 'Неправильный ответ. Попробуй ещё раз!'
+        }))
+        return
+      }
+    } else {
+      if (!answer || !answer.trim()) {
+        setErrors(prev => ({
+          ...prev,
+          [task.id]: 'Сначала напиши свой код!'
+        }))
+        return
+      }
+
+      const code = answer.toLowerCase()
+
+      const isCorrect = task.checks.every(check =>
+        code.includes(check.toLowerCase())
+      )
+
+      if (!isCorrect) {
+        setErrors(prev => ({
+          ...prev,
+          [task.id]: 'Код пока не соответствует заданию. Проверь его!'
+        }))
+        return
+      }
+    }
+
+    if (!results[task.id]) {
+      // Здесь подключается твоя существующая функция начисления XP через API.
+      // Размер награды: task.xpReward
+    }
+
+    setResults(prev => ({
+      ...prev,
+      [task.id]: true
+    }))
+
+    setErrors(prev => ({
+      ...prev,
+      [task.id]: ''
+    }))
   }
 
-  const saveCode = value => {
-    setCode(value)
-    localStorage.setItem(`${storageKey}-code`, value)
+  const allTasksCompleted = lesson.tasks.every(
+    task => results[task.id]
+  )
+
+  const finishLesson = () => {
+    if (!allTasksCompleted) return
+
+    localStorage.setItem(`js_lesson_${id}_completed`, 'true')
+    setCompleted(true)
   }
 
-  const completeLesson = () => {
-    if (!code.trim()) return
+  const nextLesson = () => {
+    if (!completed) return
 
-    localStorage.setItem(storageKey, 'true')
-    setIsCompleted(true)
+    const next = lessons[lessonIndex + 1]
 
-    const nextLesson = lessons[lessonIndex + 1]
-
-    if (nextLesson) {
-      navigate(`/javascript/lesson/${nextLesson.id}`)
+    if (next) {
+      navigate(`/javascript/lesson/${next.id}`)
     } else {
       navigate('/javascript')
     }
   }
 
-  return (
-    <div className="min-h-screen bg-slate-950 text-white p-4 md:p-8">
-      <div className="max-w-4xl mx-auto">
+  const totalXP = lesson.tasks.reduce(
+    (total, task) => total + (results[task.id] ? task.xpReward : 0),
+    0
+  )
 
+  return (
+    <div className="lesson-container">
+
+      <div className="lesson-header">
         <button
           onClick={() => navigate('/javascript')}
-          className="text-yellow-400 mb-6 hover:text-yellow-300"
+          style={{ cursor: 'pointer' }}
         >
           ← Назад к курсу
         </button>
 
-        <div className="mb-8">
-          <p className="text-yellow-400 text-sm mb-2">
-            JavaScript · Урок {lessonIndex + 1} из {lessons.length}
-          </p>
+        <h1>{lesson.title}</h1>
 
-          <h1 className="text-3xl font-bold mb-3">
-            {lesson.title}
-          </h1>
-        </div>
+        <p>
+          Урок {lessonIndex + 1} из {lessons.length}
+        </p>
+      </div>
 
-        {/* Теория */}
-        <section className="bg-slate-900 border border-slate-800 rounded-2xl p-6 mb-6">
-          <h2 className="text-xl font-bold mb-4">Теория</h2>
-          <p className="text-gray-300 whitespace-pre-line leading-7">
-            {lesson.theory}
-          </p>
-        </section>
+      <div className="lesson-theory">
+        <h2>📚 Теория</h2>
 
-        {/* Практика */}
-        <section className="bg-slate-900 border border-slate-800 rounded-2xl p-6">
-          <h2 className="text-xl font-bold mb-4 text-yellow-400">
-            Практика
-          </h2>
-
-          <p className="text-gray-300 mb-3">
-            {lesson.practice.description}
-          </p>
-
-          <div className="bg-slate-950 border border-slate-800 rounded-xl p-4 mb-5">
-            <p className="text-gray-300 whitespace-pre-line">
-              {lesson.practice.task}
-            </p>
+        {lesson.theory.map((item, index) => (
+          <div className="theory-card" key={index}>
+            <h3>{item.title}</h3>
+            <p>{item.text}</p>
           </div>
+        ))}
+      </div>
 
-          {/* Редактор кода */}
-          <div className="mb-5">
-            <div className="flex items-center justify-between mb-2">
-              <label className="font-semibold text-sm">
-                Твой код
-              </label>
-              <span className="text-gray-500 text-xs">
-                JavaScript Editor
-              </span>
+      <div className="lesson-example">
+        <h2>💻 Пример кода</h2>
+
+        <h3>{lesson.example.title}</h3>
+
+        <pre>
+          <code>{lesson.example.code}</code>
+        </pre>
+
+        <p>{lesson.example.description}</p>
+      </div>
+
+      <div className="lesson-practice">
+        <h2>🚀 Практика</h2>
+
+        {lesson.tasks.map((task, index) => (
+          <div className="task-card" key={task.id}>
+
+            <h3>
+              Задание {index + 1}: {task.title}
+            </h3>
+
+            <p>{task.description}</p>
+
+            {task.type === 'choice' && (
+              <div className="task-options">
+                {task.options.map((option, optionIndex) => (
+                  <button
+                    key={optionIndex}
+                    onClick={() => saveAnswer(task.id, optionIndex)}
+                    disabled={results[task.id]}
+                    className={
+                      answers[task.id] === optionIndex
+                        ? 'selected'
+                        : ''
+                    }
+                    style={{ cursor: 'pointer' }}
+                  >
+                    {option}
+                  </button>
+                ))}
+              </div>
+            )}
+
+            {(task.type === 'code' || task.type === 'project') && (
+              <textarea
+                value={answers[task.id] || task.initialCode || ''}
+                onChange={e => saveAnswer(task.id, e.target.value)}
+                disabled={results[task.id]}
+                placeholder="Напиши свой JavaScript код..."
+                rows={8}
+              />
+            )}
+
+            {errors[task.id] && (
+              <p className="task-error">
+                {errors[task.id]}
+              </p>
+            )}
+
+            {showHint[task.id] && (
+              <div className="task-hint">
+                💡 {task.hint}
+              </div>
+            )}
+
+            <div className="task-actions">
+
+              <button
+                onClick={() => setShowHint(prev => ({
+                  ...prev,
+                  [task.id]: !prev[task.id]
+                }))}
+                style={{ cursor: 'pointer' }}
+              >
+                💡 Подсказка
+              </button>
+
+              <button
+                onClick={() => checkTask(task)}
+                disabled={results[task.id]}
+                style={{ cursor: 'pointer' }}
+              >
+                {results[task.id] ? '✓ Выполнено' : 'Проверить'}
+              </button>
+
             </div>
 
-            <textarea
-              value={code}
-              onChange={e => saveCode(e.target.value)}
-              placeholder="Напиши свой JavaScript-код здесь..."
-              spellCheck={false}
-              className="w-full min-h-[250px] resize-y bg-[#080d18] border border-slate-700 rounded-xl p-4 text-yellow-300 font-mono text-sm outline-none focus:border-yellow-500"
-            />
-          </div>
+            {results[task.id] && (
+              <p className="task-success">
+                ✓ Отлично! +{task.xpReward} XP
+              </p>
+            )}
 
+          </div>
+        ))}
+      </div>
+
+      <div className="lesson-footer">
+
+        <p>
+          Выполнено: {Object.values(results).filter(Boolean).length}
+          {' / '}
+          {lesson.tasks.length}
+        </p>
+
+        <p>Получено XP: {totalXP}</p>
+
+        {!completed && (
           <button
-            onClick={completeLesson}
-            disabled={!code.trim()}
-            className="w-full bg-yellow-500 hover:bg-yellow-400 text-black disabled:bg-slate-700 disabled:text-gray-500 disabled:cursor-not-allowed py-3 rounded-xl font-semibold transition"
+            onClick={finishLesson}
+            disabled={!allTasksCompleted}
+            style={{ cursor: 'pointer' }}
           >
-            {isCompleted ? 'Урок завершён' : 'Завершить урок'}
+            Завершить урок
           </button>
-        </section>
+        )}
+
+        {completed && (
+          <button
+            onClick={nextLesson}
+            style={{ cursor: 'pointer' }}
+          >
+            {lessonIndex === lessons.length - 1
+              ? 'Завершить курс'
+              : 'Следующий урок →'}
+          </button>
+        )}
 
       </div>
+
     </div>
   )
 }
