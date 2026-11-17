@@ -13,7 +13,7 @@ const Javascript = () => {
 
                 <button
                     onClick={() => navigate('/course')}
-                    className="text-yellow-400 hover:text-yellow-300 mb-6"
+                    className="cursor-pointer text-yellow-400 hover:text-yellow-300 mb-6"
                 >
                     ← Назад к курсам
                 </button>
@@ -64,12 +64,12 @@ const Javascript = () => {
                                     <button
                                         key={lesson.id}
                                         onClick={() =>
-                                            navigate(`/js/lesson/${lesson.id}`)
+                                            navigate(`/javascript/lesson/${lesson.id}`)
                                         }
-                                        className="w-full text-left flex items-center justify-between gap-3 bg-slate-800/70 hover:bg-slate-700 p-4 rounded-xl transition"
+                                        className="w-full cursor-pointer text-left flex items-center justify-between gap-3 bg-slate-800/70 hover:bg-slate-700 p-4 rounded-xl transition"
                                     >
 
-                                        <div className="flex items-center gap-3">
+                                        <div className="flex items-center cursor-pointer gap-3">
 
                                             <span className="w-9 h-9 shrink-0 flex items-center justify-center rounded-lg bg-yellow-500/10 text-yellow-400">
                                                 {lessonIndex + 1}

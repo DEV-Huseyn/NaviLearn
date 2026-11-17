@@ -15,7 +15,7 @@ const Css = () => {
 
                 <button
                     onClick={() => navigate('/course')}
-                    className="text-emerald-400 hover:text-emerald-300 mb-6"
+                    className="text-emerald-400 cursor-pointer hover:text-emerald-300 mb-6"
                 >
                     ← Назад к курсам
                 </button>
@@ -29,7 +29,7 @@ const Css = () => {
                         {cssCourse.description}
                     </p>
 
-                    <div className="flex gap-4 mt-5 flex-wrap">
+                    <div className="flex gap-4 mt-5 flex-wrap cursor-pointer">
                         <span className="bg-blue-500/10 text-blue-400 px-4 py-2 rounded-xl">
                             {cssCourse.modules.length} модулей
                         </span>
@@ -69,7 +69,7 @@ const Css = () => {
                                         onClick={() =>
                                             navigate(`/css/lesson/${lesson.id}`)
                                         }
-                                        className="w-full text-left flex items-center justify-between gap-3 bg-slate-800/70 hover:bg-slate-700 p-4 rounded-xl transition"
+                                        className="w-full text-left flex cursor-pointer items-center justify-between gap-3 bg-slate-800/70 hover:bg-slate-700 p-4 rounded-xl transition"
                                     >
 
                                         <div className="flex items-center gap-3">

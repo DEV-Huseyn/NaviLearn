@@ -77,7 +77,10 @@ function App() {
 
       <Route path="/css/lesson/:id" element={<Lessons />} />
       
-      <Route path="/javascript/lesson/:id" element={<LessonsJS />} />
+      <Route
+      path="/javascript/lesson/:id"
+      element={isLoggedIn ? <LessonsJS /> : <Navigate to="/sign__in" replace />}
+     />
 
   </Routes>
   )
