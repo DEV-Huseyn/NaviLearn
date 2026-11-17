@@ -225,12 +225,9 @@ function Lessons() {
 
         // Последний урок возвращает пользователя к курсам
         if (!nextLesson) {
-            navigate('/course')
+            navigate('/css')
             return
         }
-
-        // Переходим к следующему уроку CSS
-        navigate(`/css/lesson/${nextLesson.id}`)
     }
 
     // HTML для предпросмотра CSS
