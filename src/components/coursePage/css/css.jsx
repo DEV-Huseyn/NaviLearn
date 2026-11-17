@@ -3,16 +3,16 @@ import React from 'react'
 import { useNavigate } from 'react-router'
 import cssCourse from './css.json'
 
-
 const Css = () => {
     const navigate = useNavigate()
 
+    const course = cssCourse.course
+
     return (
         <div className="min-h-screen bg-slate-950 text-white p-5 sm:p-8">
-
-            {/* Header */}
             <div className="max-w-5xl mx-auto">
 
+                {/* Header */}
                 <button
                     onClick={() => navigate('/course')}
                     className="text-emerald-400 cursor-pointer hover:text-emerald-300 mb-6"
@@ -22,23 +22,36 @@ const Css = () => {
 
                 <div className="mb-10">
                     <h1 className="text-4xl font-bold text-blue-400">
-                        {cssCourse.title}
+                        {course.title}
                     </h1>
 
                     <p className="text-slate-400 mt-3">
-                        {cssCourse.description}
+                        {course.description}
                     </p>
 
-                    <div className="flex gap-4 mt-5 flex-wrap cursor-pointer">
+                    <div className="flex gap-4 mt-5 flex-wrap">
                         <span className="bg-blue-500/10 text-blue-400 px-4 py-2 rounded-xl">
-                            {cssCourse.modules.length} модулей
+                            {course.modules.length} модулей
                         </span>
 
                         <span className="bg-emerald-500/10 text-emerald-400 px-4 py-2 rounded-xl">
-                            {cssCourse.modules.reduce(
+                            {course.modules.reduce(
                                 (total, module) =>
-                                    total + module.lessons.length, 0
+                                    total + module.lessons.length,
+                                0
                             )} уроков
+                        </span>
+
+                        <span className="bg-yellow-500/10 text-yellow-400 px-4 py-2 rounded-xl">
+                            {course.modules.reduce(
+                                (total, module) =>
+                                    total + module.lessons.reduce(
+                                        (sum, lesson) =>
+                                            sum + lesson.tasks.length,
+                                        0
+                                    ),
+                                0
+                            )} заданий
                         </span>
                     </div>
                 </div>
@@ -46,7 +59,7 @@ const Css = () => {
                 {/* Modules */}
                 <div className="space-y-6">
 
-                    {cssCourse.modules.map((module, index) => (
+                    {course.modules.map((module, index) => (
 
                         <div
                             key={module.id}
@@ -57,6 +70,7 @@ const Css = () => {
                                 <span className="text-blue-400 mr-2">
                                     {index + 1}.
                                 </span>
+
                                 {module.title}
                             </h2>
 
@@ -101,7 +115,6 @@ const Css = () => {
                 </div>
 
             </div>
-
         </div>
     )
 }

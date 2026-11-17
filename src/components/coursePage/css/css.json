@@ -1,465 +1,685 @@
 
 {
-  "course": "CSS",
-  "title": "Полный курс CSS с нуля",
-  "description": "Научись стилизовать сайты, создавать адаптивные интерфейсы и красивые компоненты.",
-  "level": "Beginner",
-  "totalLessons": 10,
-  "lessons": [
-    {
-      "id": 1,
-      "title": "Знакомство с CSS",
-      "description": "Подключаем CSS и создаём первые стили.",
-      "exp": 10,
-      "theory": [
-        {
-          "title": "Что такое CSS?",
-          "text": "CSS — язык стилей, который отвечает за внешний вид HTML-страницы. С его помощью можно менять цвета, размеры, шрифты, расположение элементов и создавать красивые интерфейсы."
-        },
-        {
-          "title": "Подключение CSS",
-          "text": "Внешний CSS-файл подключается через тег link внутри head. Атрибут href указывает путь к файлу. Также существует внутренний CSS через style и встроенные стили через атрибут style."
-        },
-        {
-          "title": "Синтаксис CSS",
-          "text": "CSS состоит из селектора и блока свойств. Селектор выбирает HTML-элемент, а внутри фигурных скобок указываются свойства и значения."
-        }
-      ],
-      "example": "/* style.css */\nh1 {\n  color: green;\n  font-size: 32px;\n}\n\np {\n  color: gray;\n}",
-      "tasks": [
-        {
-          "id": 1,
-          "type": "choice",
-          "title": "Проверим теорию",
-          "description": "Для чего используется CSS?",
-          "options": [
-            "Для создания базы данных",
-            "Для оформления HTML-страниц",
-            "Для создания серверов",
-            "Для хранения файлов"
-          ],
-          "answer": 1
-        },
-        {
-          "id": 2,
-          "type": "code",
-          "title": "Первый стиль",
-          "description": "Напиши CSS для h1. Сделай цвет текста blue и размер шрифта 30px.",
-          "checks": ["h1", "color: blue", "font-size: 30px"]
-        },
-        {
-          "id": 3,
-          "type": "project",
-          "title": "Оформи первую страницу",
-          "description": "Создай стили для h1 и p. Заголовок должен быть зелёным размером 32px, а абзац серым размером 18px. Также задай body светлый фон #f5f5f5.",
-          "checks": ["h1", "color: green", "font-size: 32px", "p", "color: gray", "font-size: 18px", "body", "background"]
-        }
-      ]
+  "course": {
+    "id": "css-beginner",
+    "title": "CSS — от нуля до создания сайтов",
+    "description": "Научись оформлять веб-страницы, работать с цветами, размерами, Flexbox, Grid и адаптивностью.",
+    "language": "css",
+    "level": "beginner",
+    "totalModules": 10,
+    "xpPerTask": 10,
+    "editor": {
+      "language": "css",
+      "showPreview": true,
+      "autoSave": true
     },
-    {
-      "id": 2,
-      "title": "CSS-селекторы",
-      "description": "Учимся выбирать элементы и задавать им стили.",
-      "exp": 10,
-      "theory": [
-        {
-          "title": "Селектор по тегу",
-          "text": "Селектор по тегу выбирает все элементы определённого типа. Например, p выбирает все абзацы на странице."
-        },
-        {
-          "title": "Классы и идентификаторы",
-          "text": "Класс начинается с точки: .card. ID начинается с решётки: #header. Класс можно использовать у нескольких элементов, а ID обычно уникален."
-        },
-        {
-          "title": "Группировка селекторов",
-          "text": "Через запятую можно применить одинаковые стили сразу к нескольким селекторам. Например, h1, h2 { color: red; }."
-        }
-      ],
-      "example": ".card {\n  background: white;\n  padding: 20px;\n}\n\n#header {\n  background: black;\n}\n\nh1, h2 {\n  color: blue;\n}",
-      "tasks": [
-        {
-          "id": 1,
-          "type": "choice",
-          "title": "Выбираем класс",
-          "description": "Как записывается CSS-селектор класса?",
-          "options": ["#card", ".card", "card()", "@card"],
-          "answer": 1
-        },
-        {
-          "id": 2,
-          "type": "code",
-          "title": "Стили для карточки",
-          "description": "Создай селектор .card. Добавь белый фон, внутренний отступ 20px и скругление углов 12px.",
-          "checks": [".card", "background: white", "padding: 20px", "border-radius: 12px"]
-        },
-        {
-          "id": 3,
-          "type": "project",
-          "title": "Оформи шапку сайта",
-          "description": "Создай стили для #header с чёрным фоном и белым текстом. Для .logo задай размер 26px и жирный шрифт. Для .menu добавь display: flex и gap: 20px.",
-          "checks": ["#header", "background", "color: white", ".logo", "font-size: 26px", "font-weight: bold", ".menu", "display: flex", "gap: 20px"]
-        }
-      ]
-    },
-    {
-      "id": 3,
-      "title": "Цвета и текст",
-      "description": "Работаем с цветами, шрифтами и оформлением текста.",
-      "exp": 10,
-      "theory": [
-        {
-          "title": "Цвета",
-          "text": "Свойство color меняет цвет текста, background-color задаёт цвет фона. Цвета можно записывать словами, через HEX, RGB и другие форматы."
-        },
-        {
-          "title": "Шрифты",
-          "text": "font-size задаёт размер текста, font-family выбирает шрифт, font-weight меняет толщину, а font-style позволяет сделать текст курсивным."
-        },
-        {
-          "title": "Оформление текста",
-          "text": "text-align выравнивает текст. text-decoration управляет подчёркиванием и другими линиями. line-height задаёт расстояние между строками."
-        }
-      ],
-      "example": "h1 {\n  color: #2563eb;\n  font-size: 36px;\n  font-weight: bold;\n  text-align: center;\n}\n\np {\n  font-size: 18px;\n  line-height: 1.6;\n  color: #555;\n}",
-      "tasks": [
-        {
-          "id": 1,
-          "type": "choice",
-          "title": "Цвет текста",
-          "description": "Какое свойство отвечает за цвет текста?",
-          "options": ["background", "font-size", "color", "text-align"],
-          "answer": 2
-        },
-        {
-          "id": 2,
-          "type": "code",
-          "title": "Оформи заголовок",
-          "description": "Создай h1 синего цвета #2563eb, размером 36px, жирным и выровненным по центру.",
-          "checks": ["h1", "color: #2563eb", "font-size: 36px", "font-weight: bold", "text-align: center"]
-        },
-        {
-          "id": 3,
-          "type": "project",
-          "title": "Типографика статьи",
-          "description": "Оформи статью. Заголовок h1 сделай размером 32px и по центру. Абзацы p сделай размером 18px, с line-height: 1.6 и цветом #555. Ссылки a сделай синими без подчёркивания.",
-          "checks": ["h1", "font-size: 32px", "text-align: center", "p", "font-size: 18px", "line-height: 1.6", "color: #555", "a", "text-decoration: none"]
-        }
-      ]
-    },
-    {
-      "id": 4,
-      "title": "Блочная модель CSS",
-      "description": "Разбираемся с размерами, отступами и границами элементов.",
-      "exp": 10,
-      "theory": [
-        {
-          "title": "Margin и Padding",
-          "text": "margin создаёт внешнее расстояние между элементами. padding создаёт внутреннее пространство между содержимым и границей элемента."
-        },
-        {
-          "title": "Border",
-          "text": "border добавляет границу элементу. Можно указать толщину, тип линии и цвет."
-        },
-        {
-          "title": "Box-sizing",
-          "text": "box-sizing: border-box включает padding и border в общую ширину и высоту элемента. Это помогает удобнее рассчитывать размеры."
-        }
-      ],
-      "example": ".card {\n  width: 300px;\n  padding: 20px;\n  margin: 30px auto;\n  border: 1px solid #ddd;\n  border-radius: 12px;\n  box-sizing: border-box;\n}",
-      "tasks": [
-        {
-          "id": 1,
-          "type": "choice",
-          "title": "Отступы",
-          "description": "Какое свойство создаёт внутренний отступ?",
-          "options": ["margin", "padding", "border", "width"],
-          "answer": 1
-        },
-        {
-          "id": 2,
-          "type": "code",
-          "title": "Создай карточку",
-          "description": "Для .card задай ширину 300px, padding 20px, border 1px solid #ddd и border-radius 12px.",
-          "checks": [".card", "width: 300px", "padding: 20px", "border: 1px solid #ddd", "border-radius: 12px"]
-        },
-        {
-          "id": 3,
-          "type": "project",
-          "title": "Карточка товара",
-          "description": "Создай .product-card шириной 320px. Добавь внутренний отступ 20px, внешний отступ 20px, белый фон, границу 1px solid #ddd, скругление 15px и box-shadow. Используй box-sizing: border-box.",
-          "checks": [".product-card", "width: 320px", "padding: 20px", "margin: 20px", "background: white", "border: 1px solid #ddd", "border-radius: 15px", "box-shadow", "box-sizing: border-box"]
-        }
-      ]
-    },
-    {
-      "id": 5,
-      "title": "Display и позиционирование",
-      "description": "Учимся управлять расположением HTML-элементов.",
-      "exp": 10,
-      "theory": [
-        {
-          "title": "Display",
-          "text": "display определяет способ отображения элемента. block занимает доступную ширину, inline располагается в строке, inline-block сочетает особенности обоих, none скрывает элемент."
-        },
-        {
-          "title": "Position",
-          "text": "position: relative сохраняет место элемента и позволяет смещать его. absolute позиционирует элемент относительно ближайшего позиционированного предка. fixed закрепляет элемент относительно окна браузера."
-        },
-        {
-          "title": "Z-index",
-          "text": "z-index управляет порядком наложения позиционированных элементов. Чем больше значение, тем выше элемент может располагаться."
-        }
-      ],
-      "example": ".parent {\n  position: relative;\n}\n\n.badge {\n  position: absolute;\n  top: 10px;\n  right: 10px;\n}\n\n.hidden {\n  display: none;\n}",
-      "tasks": [
-        {
-          "id": 1,
-          "type": "choice",
-          "title": "Скрытие элемента",
-          "description": "Как полностью скрыть элемент вместе с занимаемым им местом?",
-          "options": ["display: none", "display: block", "position: fixed", "visibility: visible"],
-          "answer": 0
-        },
-        {
-          "id": 2,
-          "type": "code",
-          "title": "Создай скрытый блок",
-          "description": "Напиши CSS для .hidden, чтобы элемент не отображался.",
-          "checks": [".hidden", "display: none"]
-        },
-        {
-          "id": 3,
-          "type": "project",
-          "title": "Бейдж на карточке",
-          "description": "Создай .product с position: relative. Внутри него будет .badge с position: absolute, top: 10px и right: 10px. Бейдж должен иметь красный фон и белый текст.",
-          "checks": [".product", "position: relative", ".badge", "position: absolute", "top: 10px", "right: 10px", "background: red", "color: white"]
-        }
-      ]
-    },
-    {
-      "id": 6,
-      "title": "Flexbox",
-      "description": "Создаём горизонтальные и вертикальные расположения элементов.",
-      "exp": 10,
-      "theory": [
-        {
-          "title": "Что такое Flexbox?",
-          "text": "Flexbox — система CSS для удобного расположения элементов внутри контейнера. Чтобы её включить, используется display: flex."
-        },
-        {
-          "title": "Главная ось",
-          "text": "justify-content управляет расположением элементов по главной оси. Например, center ставит элементы по центру, space-between распределяет свободное пространство между ними."
-        },
-        {
-          "title": "Поперечная ось",
-          "text": "align-items выравнивает элементы по поперечной оси. flex-direction меняет направление расположения, а gap задаёт расстояние между элементами."
-        }
-      ],
-      "example": ".container {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  gap: 20px;\n}\n\n.cards {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 15px;\n}",
-      "tasks": [
-        {
-          "id": 1,
-          "type": "choice",
-          "title": "Включаем Flexbox",
-          "description": "Как включить Flexbox?",
-          "options": ["display: block", "display: flex", "position: flex", "flex: display"],
-          "answer": 1
-        },
-        {
-          "id": 2,
-          "type": "code",
-          "title": "Расположи элементы",
-          "description": "Создай .container с display: flex, justify-content: center, align-items: center и gap: 20px.",
-          "checks": [".container", "display: flex", "justify-content: center", "align-items: center", "gap: 20px"]
-        },
-        {
-          "id": 3,
-          "type": "project",
-          "title": "Панель навигации",
-          "description": "Создай .navbar. Расположи логотип и меню в одну строку с помощью Flexbox. Используй justify-content: space-between, align-items: center и padding: 20px. Для .menu добавь display: flex и gap: 25px.",
-          "checks": [".navbar", "display: flex", "justify-content: space-between", "align-items: center", "padding: 20px", ".menu", "gap: 25px"]
-        }
-      ]
-    },
-    {
-      "id": 7,
-      "title": "CSS Grid",
-      "description": "Создаём сетки и размещаем карточки в несколько колонок.",
-      "exp": 10,
-      "theory": [
-        {
-          "title": "Что такое Grid?",
-          "text": "CSS Grid — система двухмерной сетки. Она позволяет одновременно управлять строками и колонками."
-        },
-        {
-          "title": "Колонки и строки",
-          "text": "grid-template-columns определяет количество и размеры колонок. grid-template-rows задаёт строки. Например, repeat(3, 1fr) создаёт три одинаковые колонки."
-        },
-        {
-          "title": "Промежутки",
-          "text": "gap задаёт расстояние между ячейками сетки. Можно использовать column-gap и row-gap отдельно."
-        }
-      ],
-      "example": ".grid {\n  display: grid;\n  grid-template-columns: repeat(3, 1fr);\n  gap: 20px;\n}\n\n.item {\n  padding: 30px;\n  background: #ddd;\n}",
-      "tasks": [
-        {
-          "id": 1,
-          "type": "choice",
-          "title": "Система сеток",
-          "description": "Какое свойство задаёт количество колонок Grid?",
-          "options": ["grid-template-columns", "flex-direction", "align-items", "position"],
-          "answer": 0
-        },
-        {
-          "id": 2,
-          "type": "code",
-          "title": "Создай сетку",
-          "description": "Для .grid включи display: grid, создай три одинаковые колонки и расстояние между ними 20px.",
-          "checks": [".grid", "display: grid", "grid-template-columns: repeat(3, 1fr)", "gap: 20px"]
-        },
-        {
-          "id": 3,
-          "type": "project",
-          "title": "Галерея фотографий",
-          "description": "Создай .gallery с Grid из трёх одинаковых колонок. Добавь gap: 15px. Для .photo-card задай белый фон, padding: 15px и border-radius: 10px.",
-          "checks": [".gallery", "display: grid", "grid-template-columns: repeat(3, 1fr)", "gap: 15px", ".photo-card", "background: white", "padding: 15px", "border-radius: 10px"]
-        }
-      ]
-    },
-    {
-      "id": 8,
-      "title": "Адаптивная вёрстка",
-      "description": "Делаем сайты удобными для телефонов, планшетов и компьютеров.",
-      "exp": 10,
-      "theory": [
-        {
-          "title": "Что такое адаптивность?",
-          "text": "Адаптивная вёрстка позволяет сайту правильно отображаться на экранах разных размеров. Для этого используются гибкие размеры, сетки и медиазапросы."
-        },
-        {
-          "title": "Media Queries",
-          "text": "@media позволяет применять CSS только при определённых условиях. Например, max-width: 768px включает стили для экранов шириной до 768px."
-        },
-        {
-          "title": "Гибкие размеры",
-          "text": "Проценты, max-width, min-width, rem и относительные единицы помогают создавать интерфейсы, которые подстраиваются под размер экрана."
-        }
-      ],
-      "example": ".container {\n  width: 90%;\n  max-width: 1200px;\n  margin: 0 auto;\n}\n\n.cards {\n  display: grid;\n  grid-template-columns: repeat(3, 1fr);\n}\n\n@media (max-width: 768px) {\n  .cards {\n    grid-template-columns: 1fr;\n  }\n}",
-      "tasks": [
-        {
-          "id": 1,
-          "type": "choice",
-          "title": "Медиазапросы",
-          "description": "Какое правило используется для адаптивных стилей?",
-          "options": ["@responsive", "@media", "@screen", "@mobile"],
-          "answer": 1
-        },
-        {
-          "id": 2,
-          "type": "code",
-          "title": "Мобильная сетка",
-          "description": "Создай медиазапрос max-width: 768px. Внутри него для .cards установи grid-template-columns: 1fr.",
-          "checks": ["@media", "max-width: 768px", ".cards", "grid-template-columns: 1fr"]
-        },
-        {
-          "id": 3,
-          "type": "project",
-          "title": "Адаптивные карточки",
-          "description": "Создай .cards с тремя колонками на компьютере. При ширине до 768px оставь две колонки, а до 480px — одну колонку. Добавь gap: 20px.",
-          "checks": [".cards", "display: grid", "repeat(3, 1fr)", "gap: 20px", "@media", "768px", "repeat(2, 1fr)", "480px", "1fr"]
-        }
-      ]
-    },
-    {
-      "id": 9,
-      "title": "Эффекты и анимации",
-      "description": "Добавляем красивые эффекты при наведении и анимацию.",
-      "exp": 10,
-      "theory": [
-        {
-          "title": "Hover",
-          "text": ":hover применяется, когда пользователь наводит курсор на элемент. С его помощью можно менять цвет, размер и другие свойства."
-        },
-        {
-          "title": "Transition",
-          "text": "transition делает изменение CSS-свойств плавным. Например, transition: 0.3s позволяет плавно менять цвет кнопки."
-        },
-        {
-          "title": "Transform и Animation",
-          "text": "transform позволяет перемещать, поворачивать и масштабировать элементы. @keyframes создаёт собственную анимацию, которую можно подключить через animation."
-        }
-      ],
-      "example": ".button {\n  background: blue;\n  color: white;\n  transition: 0.3s;\n}\n\n.button:hover {\n  background: darkblue;\n  transform: scale(1.05);\n}\n\n@keyframes move {\n  from { transform: translateX(0); }\n  to { transform: translateX(100px); }\n}",
-      "tasks": [
-        {
-          "id": 1,
-          "type": "choice",
-          "title": "Плавные эффекты",
-          "description": "Какое свойство отвечает за плавное изменение стилей?",
-          "options": ["animation-name", "transition", "position", "opacity"],
-          "answer": 1
-        },
-        {
-          "id": 2,
-          "type": "code",
-          "title": "Эффект кнопки",
-          "description": "Создай .button с transition: 0.3s. При наведении через :hover меняй фон на darkblue.",
-          "checks": [".button", "transition: 0.3s", ":hover", "background: darkblue"]
-        },
-        {
-          "id": 3,
-          "type": "project",
-          "title": "Интерактивная карточка",
-          "description": "Создай .card с transition: 0.3s. При наведении увеличивай её через transform: scale(1.05) и добавляй box-shadow. Сделай анимацию появления через @keyframes fadeIn и подключи её к карточке.",
-          "checks": [".card", "transition: 0.3s", ":hover", "transform: scale(1.05)", "box-shadow", "@keyframes fadeIn", "animation:"]
-        }
-      ]
-    },
-    {
-      "id": 10,
-      "title": "Финальный проект: Landing Page",
-      "description": "Создаём полноценный адаптивный сайт с использованием CSS.",
-      "exp": 50,
-      "theory": [
-        {
-          "title": "Ты готов к проекту",
-          "text": "Ты изучил селекторы, цвета, размеры, Flexbox, Grid, адаптивность и анимации. Теперь нужно объединить эти знания в одном проекте."
-        },
-        {
-          "title": "Задача проекта",
-          "text": "Создай дизайн сайта IT-курсов. На странице должны быть шапка, главный экран, карточки курсов и подвал."
-        },
-        {
-          "title": "Требования",
-          "text": "Сайт должен быть адаптивным, иметь аккуратные отступы, читаемые шрифты, красивые карточки и интерактивные кнопки."
-        }
-      ],
-      "example": "/* Твой финальный проект */\n.container {\n  width: 90%;\n  max-width: 1200px;\n  margin: 0 auto;\n}\n\n.navbar {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n}\n\n.courses {\n  display: grid;\n  grid-template-columns: repeat(3, 1fr);\n  gap: 20px;\n}\n\n@media (max-width: 768px) {\n  .courses {\n    grid-template-columns: 1fr;\n  }\n}",
-      "tasks": [
-        {
-          "id": 1,
-          "type": "choice",
-          "title": "Последняя проверка",
-          "description": "Какая технология позволяет создавать адаптивные CSS-стили?",
-          "options": ["@media", "@import", "display: none", "font-style"],
-          "answer": 0
-        },
-        {
-          "id": 2,
-          "type": "code",
-          "title": "Создай сетку курсов",
-          "description": "Напиши .courses с display: grid, тремя одинаковыми колонками и gap: 20px.",
-          "checks": [".courses", "display: grid", "grid-template-columns: repeat(3, 1fr)", "gap: 20px"]
-        },
-        {
-          "id": 3,
-          "type": "project",
-          "title": "Мой первый Landing Page",
-          "description": "Создай CSS для полноценного IT-сайта. Добавь общий container с max-width: 1200px, navbar на Flexbox, hero с центрированным заголовком, courses с тремя колонками Grid, карточки с padding, border-radius и box-shadow, кнопки с hover и transition. Добавь адаптивность: до 768px две колонки, до 480px одна колонка.",
-          "checks": ["container", "max-width: 1200px", "navbar", "display: flex", "hero", "text-align: center", "courses", "display: grid", "repeat(3, 1fr)", "border-radius", "box-shadow", ":hover", "transition", "@media", "768px", "480px", "1fr"]
-        }
-      ]
-    }
-  ]
+    "modules": [
+      {
+        "id": 1,
+        "title": "Знакомство с CSS",
+        "lessons": [
+          {
+            "id": 1,
+            "title": "Что такое CSS",
+            "theory": "CSS — язык стилей, который отвечает за внешний вид HTML-страниц. С его помощью можно менять цвета, размеры, расположение элементов, шрифты и многое другое. CSS можно писать в отдельном файле style.css.",
+            "example": "h1 {\n  color: blue;\n}",
+            "htmlTemplate": "<h1>Привет, мир!</h1>\n<p>Я изучаю CSS.</p>",
+            "tasks": [
+              {
+                "id": 1,
+                "title": "Первый стиль",
+                "description": "Сделай текст заголовка h1 синим цветом.",
+                "initialCode": "",
+                "xpReward": 10,
+                "checks": [
+                  {
+                    "type": "declaration",
+                    "selector": "h1",
+                    "property": "color",
+                    "value": "blue"
+                  }
+                ]
+              },
+              {
+                "id": 2,
+                "title": "Меняем размер текста",
+                "description": "Установи для параграфа p размер шрифта 20px.",
+                "initialCode": "",
+                "xpReward": 10,
+                "checks": [
+                  {
+                    "type": "declaration",
+                    "selector": "p",
+                    "property": "font-size",
+                    "value": "20px"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "CSS-селекторы",
+        "lessons": [
+          {
+            "id": 2,
+            "title": "Теги, классы и идентификаторы",
+            "theory": "Селекторы определяют, к каким HTML-элементам применяются стили. h1 выбирает все заголовки h1. .title выбирает элементы с class=\"title\". #header выбирает элемент с id=\"header\".",
+            "example": "h1 {\n  color: red;\n}\n\n.title {\n  font-size: 24px;\n}\n\n#header {\n  background-color: black;\n}",
+            "htmlTemplate": "<h1>Главный заголовок</h1>\n<p class=\"title\">Мой текст</p>\n<div id=\"header\">Шапка сайта</div>",
+            "tasks": [
+              {
+                "id": 3,
+                "title": "Селектор класса",
+                "description": "Выбери класс title и установи для него цвет green.",
+                "initialCode": "",
+                "xpReward": 10,
+                "checks": [
+                  {
+                    "type": "declaration",
+                    "selector": ".title",
+                    "property": "color",
+                    "value": "green"
+                  }
+                ]
+              },
+              {
+                "id": 4,
+                "title": "Селектор ID",
+                "description": "Выбери элемент с id header и установи ему чёрный фон.",
+                "initialCode": "",
+                "xpReward": 10,
+                "checks": [
+                  {
+                    "type": "declaration",
+                    "selector": "#header",
+                    "property": "background-color",
+                    "value": "black"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Цвета и фон",
+        "lessons": [
+          {
+            "id": 3,
+            "title": "Цвета в CSS",
+            "theory": "Свойство color меняет цвет текста. background-color меняет цвет фона. Цвета можно задавать словами, HEX-кодами, RGB и другими форматами.",
+            "example": "h1 {\n  color: #ff0000;\n}\n\n.card {\n  background-color: rgb(240, 240, 240);\n}",
+            "htmlTemplate": "<h1>CSS</h1>\n<div class=\"card\">Моя карточка</div>",
+            "tasks": [
+              {
+                "id": 5,
+                "title": "HEX-цвет",
+                "description": "Установи заголовку h1 цвет #ff0000.",
+                "initialCode": "",
+                "xpReward": 10,
+                "checks": [
+                  {
+                    "type": "declaration",
+                    "selector": "h1",
+                    "property": "color",
+                    "value": "#ff0000"
+                  }
+                ]
+              },
+              {
+                "id": 6,
+                "title": "Фон карточки",
+                "description": "Установи карточке .card фоновый цвет #eeeeee.",
+                "initialCode": "",
+                "xpReward": 10,
+                "checks": [
+                  {
+                    "type": "declaration",
+                    "selector": ".card",
+                    "property": "background-color",
+                    "value": "#eeeeee"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "title": "Размеры и блочная модель",
+        "lessons": [
+          {
+            "id": 4,
+            "title": "Width, height и единицы измерения",
+            "theory": "width задаёт ширину элемента, height — высоту. px задаёт фиксированный размер, % зависит от родительского элемента, а rem зависит от размера шрифта корневого элемента.",
+            "example": ".box {\n  width: 300px;\n  height: 200px;\n}",
+            "htmlTemplate": "<div class=\"box\">Мой блок</div>",
+            "tasks": [
+              {
+                "id": 7,
+                "title": "Ширина блока",
+                "description": "Установи блоку .box ширину 300px.",
+                "initialCode": "",
+                "xpReward": 10,
+                "checks": [
+                  {
+                    "type": "declaration",
+                    "selector": ".box",
+                    "property": "width",
+                    "value": "300px"
+                  }
+                ]
+              },
+              {
+                "id": 8,
+                "title": "Высота блока",
+                "description": "Установи блоку .box высоту 200px.",
+                "initialCode": ".box {\n  width: 300px;\n}",
+                "xpReward": 10,
+                "checks": [
+                  {
+                    "type": "declaration",
+                    "selector": ".box",
+                    "property": "height",
+                    "value": "200px"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": 5,
+            "title": "Margin, padding и border",
+            "theory": "CSS Box Model состоит из содержимого, padding, border и margin. padding создаёт внутренний отступ, margin — внешний отступ, border — границу элемента. box-sizing: border-box включает padding и border в общую ширину и высоту.",
+            "example": ".card {\n  padding: 20px;\n  margin: 10px;\n  border: 1px solid black;\n  box-sizing: border-box;\n}",
+            "htmlTemplate": "<div class=\"card\">Карточка</div>",
+            "tasks": [
+              {
+                "id": 9,
+                "title": "Внутренний отступ",
+                "description": "Добавь карточке padding: 20px.",
+                "initialCode": "",
+                "xpReward": 10,
+                "checks": [
+                  {
+                    "type": "declaration",
+                    "selector": ".card",
+                    "property": "padding",
+                    "value": "20px"
+                  }
+                ]
+              },
+              {
+                "id": 10,
+                "title": "Граница и внешний отступ",
+                "description": "Добавь карточке margin: 10px и border: 1px solid black.",
+                "initialCode": ".card {\n  padding: 20px;\n}",
+                "xpReward": 10,
+                "checks": [
+                  {
+                    "type": "declaration",
+                    "selector": ".card",
+                    "property": "margin",
+                    "value": "10px"
+                  },
+                  {
+                    "type": "declaration",
+                    "selector": ".card",
+                    "property": "border",
+                    "value": "1px solid black"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "title": "Текст и шрифты",
+        "lessons": [
+          {
+            "id": 6,
+            "title": "Свойства текста",
+            "theory": "font-size меняет размер текста, font-weight — толщину, text-align — выравнивание, text-decoration — оформление линии текста, line-height — высоту строки.",
+            "example": "h1 {\n  font-size: 32px;\n  font-weight: bold;\n  text-align: center;\n}\n\na {\n  text-decoration: none;\n}",
+            "htmlTemplate": "<h1>Мой сайт</h1>\n<p class=\"text\">Изучаем CSS</p>\n<a href=\"#\">Моя ссылка</a>",
+            "tasks": [
+              {
+                "id": 11,
+                "title": "Выравнивание текста",
+                "description": "Выровняй заголовок h1 по центру.",
+                "initialCode": "",
+                "xpReward": 10,
+                "checks": [
+                  {
+                    "type": "declaration",
+                    "selector": "h1",
+                    "property": "text-align",
+                    "value": "center"
+                  }
+                ]
+              },
+              {
+                "id": 12,
+                "title": "Жирный текст",
+                "description": "Сделай текст .text жирным с помощью font-weight: bold.",
+                "initialCode": "",
+                "xpReward": 10,
+                "checks": [
+                  {
+                    "type": "declaration",
+                    "selector": ".text",
+                    "property": "font-weight",
+                    "value": "bold"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "title": "Фон, границы и оформление",
+        "lessons": [
+          {
+            "id": 7,
+            "title": "Border-radius, тени и фон",
+            "theory": "border-radius закругляет углы, box-shadow добавляет тень, background-image устанавливает фоновое изображение, background-size управляет его размером.",
+            "example": ".card {\n  border-radius: 12px;\n  box-shadow: 0 4px 10px rgba(0,0,0,0.2);\n}\n\nbody {\n  background-image: url('bg.jpg');\n  background-size: cover;\n}",
+            "htmlTemplate": "<div class=\"card\">Красивая карточка</div>",
+            "tasks": [
+              {
+                "id": 13,
+                "title": "Закругляем углы",
+                "description": "Добавь .card скругление углов 12px.",
+                "initialCode": "",
+                "xpReward": 10,
+                "checks": [
+                  {
+                    "type": "declaration",
+                    "selector": ".card",
+                    "property": "border-radius",
+                    "value": "12px"
+                  }
+                ]
+              },
+              {
+                "id": 14,
+                "title": "Добавляем тень",
+                "description": "Добавь карточке свойство box-shadow со значением 0 4px 10px rgba(0, 0, 0, 0.2).",
+                "initialCode": ".card {\n  border-radius: 12px;\n}",
+                "xpReward": 10,
+                "checks": [
+                  {
+                    "type": "declaration",
+                    "selector": ".card",
+                    "property": "box-shadow",
+                    "value": "0 4px 10px rgba(0, 0, 0, 0.2)"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": 7,
+        "title": "Display и Flexbox",
+        "lessons": [
+          {
+            "id": 8,
+            "title": "Display",
+            "theory": "display определяет способ отображения элемента. block занимает доступную ширину, inline располагается в строке, inline-block позволяет задавать размеры и оставаться в строке, none полностью скрывает элемент.",
+            "example": ".box {\n  display: block;\n}\n\n.hidden {\n  display: none;\n}",
+            "htmlTemplate": "<div class=\"box\">Первый блок</div>\n<div class=\"hidden\">Скрытый блок</div>",
+            "tasks": [
+              {
+                "id": 15,
+                "title": "Скрываем элемент",
+                "description": "Скрой элемент с классом hidden с помощью display: none.",
+                "initialCode": "",
+                "xpReward": 10,
+                "checks": [
+                  {
+                    "type": "declaration",
+                    "selector": ".hidden",
+                    "property": "display",
+                    "value": "none"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": 9,
+            "title": "Flexbox",
+            "theory": "Flexbox помогает располагать элементы в строку или колонку. display: flex включает Flexbox. justify-content управляет расположением по главной оси, align-items — по поперечной оси, gap задаёт расстояние между элементами.",
+            "example": ".container {\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  gap: 20px;\n}",
+            "htmlTemplate": "<div class=\"container\">\n  <div>HTML</div>\n  <div>CSS</div>\n  <div>JS</div>\n</div>",
+            "tasks": [
+              {
+                "id": 16,
+                "title": "Включаем Flexbox",
+                "description": "Для .container установи display: flex.",
+                "initialCode": "",
+                "xpReward": 10,
+                "checks": [
+                  {
+                    "type": "declaration",
+                    "selector": ".container",
+                    "property": "display",
+                    "value": "flex"
+                  }
+                ]
+              },
+              {
+                "id": 17,
+                "title": "Центрируем элементы",
+                "description": "В .container выровняй элементы по центру главной оси и поперечной оси.",
+                "initialCode": ".container {\n  display: flex;\n}",
+                "xpReward": 10,
+                "checks": [
+                  {
+                    "type": "declaration",
+                    "selector": ".container",
+                    "property": "justify-content",
+                    "value": "center"
+                  },
+                  {
+                    "type": "declaration",
+                    "selector": ".container",
+                    "property": "align-items",
+                    "value": "center"
+                  }
+                ]
+              },
+              {
+                "id": 18,
+                "title": "Расстояние между элементами",
+                "description": "Установи расстояние между элементами .container равным 20px.",
+                "initialCode": ".container {\n  display: flex;\n  justify-content: center;\n  align-items: center;\n}",
+                "xpReward": 10,
+                "checks": [
+                  {
+                    "type": "declaration",
+                    "selector": ".container",
+                    "property": "gap",
+                    "value": "20px"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": 8,
+        "title": "CSS Grid и позиционирование",
+        "lessons": [
+          {
+            "id": 10,
+            "title": "CSS Grid",
+            "theory": "CSS Grid создаёт сетку из строк и столбцов. display: grid включает сетку, grid-template-columns задаёт столбцы, gap устанавливает промежутки между ячейками.",
+            "example": ".grid {\n  display: grid;\n  grid-template-columns: repeat(3, 1fr);\n  gap: 20px;\n}",
+            "htmlTemplate": "<div class=\"grid\">\n  <div>1</div>\n  <div>2</div>\n  <div>3</div>\n</div>",
+            "tasks": [
+              {
+                "id": 19,
+                "title": "Создаём сетку",
+                "description": "Включи Grid для .grid.",
+                "initialCode": "",
+                "xpReward": 10,
+                "checks": [
+                  {
+                    "type": "declaration",
+                    "selector": ".grid",
+                    "property": "display",
+                    "value": "grid"
+                  }
+                ]
+              },
+              {
+                "id": 20,
+                "title": "Три столбца",
+                "description": "Создай три одинаковых столбца с помощью repeat(3, 1fr).",
+                "initialCode": ".grid {\n  display: grid;\n}",
+                "xpReward": 10,
+                "checks": [
+                  {
+                    "type": "declaration",
+                    "selector": ".grid",
+                    "property": "grid-template-columns",
+                    "value": "repeat(3, 1fr)"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": 11,
+            "title": "Position",
+            "theory": "position определяет способ позиционирования элемента. static — обычное положение, relative — относительно своего положения, absolute — относительно позиционированного родителя, fixed — относительно окна браузера, sticky — сочетает обычное и фиксированное положение при прокрутке.",
+            "example": ".parent {\n  position: relative;\n}\n\n.child {\n  position: absolute;\n  top: 0;\n  right: 0;\n}",
+            "htmlTemplate": "<div class=\"parent\">\n  Родитель\n  <div class=\"child\">Дочерний элемент</div>\n</div>",
+            "tasks": [
+              {
+                "id": 21,
+                "title": "Относительное позиционирование",
+                "description": "Установи .parent значение position: relative.",
+                "initialCode": "",
+                "xpReward": 10,
+                "checks": [
+                  {
+                    "type": "declaration",
+                    "selector": ".parent",
+                    "property": "position",
+                    "value": "relative"
+                  }
+                ]
+              },
+              {
+                "id": 22,
+                "title": "Абсолютное позиционирование",
+                "description": "Установи .child значение position: absolute.",
+                "initialCode": ".parent {\n  position: relative;\n}",
+                "xpReward": 10,
+                "checks": [
+                  {
+                    "type": "declaration",
+                    "selector": ".child",
+                    "property": "position",
+                    "value": "absolute"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": 9,
+        "title": "Адаптивность и интерактивность",
+        "lessons": [
+          {
+            "id": 12,
+            "title": "Псевдоклассы и hover",
+            "theory": "Псевдоклассы задают стили элементам в определённом состоянии. :hover срабатывает при наведении, :focus — при фокусе, :active — во время нажатия.",
+            "example": "button:hover {\n  background-color: blue;\n}\n\ninput:focus {\n  border-color: blue;\n}",
+            "htmlTemplate": "<button>Наведи на меня</button>\n<input type=\"text\" placeholder=\"Введи текст\">",
+            "tasks": [
+              {
+                "id": 23,
+                "title": "Эффект наведения",
+                "description": "Создай правило button:hover и установи background-color: blue.",
+                "initialCode": "",
+                "xpReward": 10,
+                "checks": [
+                  {
+                    "type": "declaration",
+                    "selector": "button:hover",
+                    "property": "background-color",
+                    "value": "blue"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": 13,
+            "title": "Адаптивный дизайн",
+            "theory": "Адаптивность позволяет сайту правильно отображаться на разных экранах. Для этого используются media queries. Например, @media (max-width: 600px) применяет стили, когда ширина окна не превышает 600px.",
+            "example": ".container {\n  width: 100%;\n}\n\n@media (max-width: 600px) {\n  .container {\n    flex-direction: column;\n  }\n}",
+            "htmlTemplate": "<div class=\"container\">\n  <div>Первый блок</div>\n  <div>Второй блок</div>\n</div>",
+            "tasks": [
+              {
+                "id": 24,
+                "title": "Первый Media Query",
+                "description": "Создай media query для экранов шириной до 600px.",
+                "initialCode": "",
+                "xpReward": 10,
+                "checks": [
+                  {
+                    "type": "mediaRuleExists",
+                    "condition": "(max-width: 600px)"
+                  }
+                ]
+              },
+              {
+                "id": 25,
+                "title": "Адаптация контейнера",
+                "description": "Внутри media query для 600px установи .container свойство flex-direction: column.",
+                "initialCode": "@media (max-width: 600px) {\n}",
+                "xpReward": 10,
+                "checks": [
+                  {
+                    "type": "mediaDeclaration",
+                    "condition": "(max-width: 600px)",
+                    "selector": ".container",
+                    "property": "flex-direction",
+                    "value": "column"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": 10,
+        "title": "Переменные и финальный проект",
+        "lessons": [
+          {
+            "id": 14,
+            "title": "CSS-переменные",
+            "theory": "CSS-переменные позволяют хранить повторяющиеся значения. Их объявляют внутри :root через --название, а используют с помощью var(). Это удобно для цветов, отступов и других настроек сайта.",
+            "example": ":root {\n  --main-color: blue;\n  --spacing: 20px;\n}\n\nbutton {\n  background-color: var(--main-color);\n  padding: var(--spacing);\n}",
+            "htmlTemplate": "<button>Моя кнопка</button>",
+            "tasks": [
+              {
+                "id": 26,
+                "title": "Создаём переменную",
+                "description": "В :root создай переменную --main-color со значением blue и используй её для фона кнопки через var().",
+                "initialCode": "",
+                "xpReward": 10,
+                "checks": [
+                  {
+                    "type": "variableExists",
+                    "selector": ":root",
+                    "name": "--main-color",
+                    "value": "blue"
+                  },
+                  {
+                    "type": "declaration",
+                    "selector": "button",
+                    "property": "background-color",
+                    "value": "var(--main-color)"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": 15,
+            "title": "Финальный проект — дизайн сайта",
+            "theory": "Теперь объедини изученные свойства CSS. Создай полноценный дизайн сайта: оформи шапку, навигацию, карточки, кнопки, текст и адаптивную сетку. Используй Flexbox или Grid и проверь результат на разных размерах экрана.",
+            "example": "Самостоятельная работа. Готового CSS-кода нет.",
+            "htmlTemplate": "<header class=\"header\">\n  <h1>Navi Learn</h1>\n  <nav><a href=\"#\">Главная</a><a href=\"#\">Курсы</a></nav>\n</header>\n<main class=\"container\">\n  <h2>Наши курсы</h2>\n  <div class=\"cards\">\n    <article class=\"card\"><h3>HTML</h3><p>Структура сайтов</p><button>Изучать</button></article>\n    <article class=\"card\"><h3>CSS</h3><p>Дизайн сайтов</p><button>Изучать</button></article>\n    <article class=\"card\"><h3>JavaScript</h3><p>Логика сайтов</p><button>Изучать</button></article>\n  </div>\n</main>\n<footer class=\"footer\">Navi Learn</footer>",
+            "tasks": [
+              {
+                "id": 27,
+                "title": "Создай дизайн Navi Learn",
+                "description": "Самостоятельно оформи предоставленную HTML-страницу. Сделай шапку с выравниванием через Flexbox, карточки курсов через Grid или Flexbox, добавь отступы, фон, скругления, тени, оформление кнопок и эффект hover. Добавь адаптацию для экранов до 600px.",
+                "initialCode": "",
+                "xpReward": 10,
+                "checks": [
+                  {
+                    "type": "declaration",
+                    "selector": ".header",
+                    "property": "display",
+                    "value": "flex"
+                  },
+                  {
+                    "type": "declaration",
+                    "selector": ".cards",
+                    "property": "display",
+                    "value": "grid"
+                  },
+                  {
+                    "type": "declaration",
+                    "selector": ".card",
+                    "property": "padding",
+                    "value": "20px"
+                  },
+                  {
+                    "type": "declaration",
+                    "selector": ".card",
+                    "property": "border-radius",
+                    "value": "12px"
+                  },
+                  {
+                    "type": "declaration",
+                    "selector": ".card",
+                    "property": "box-shadow",
+                    "value": "0 4px 10px rgba(0, 0, 0, 0.2)"
+                  },
+                  {
+                    "type": "declaration",
+                    "selector": ".header",
+                    "property": "justify-content",
+                    "value": "space-between"
+                  },
+                  {
+                    "type": "declaration",
+                    "selector": ".cards",
+                    "property": "gap",
+                    "value": "20px"
+                  },
+                  {
+                    "type": "declaration",
+                    "selector": "button:hover",
+                    "property": "background-color",
+                    "value": "blue"
+                  },
+                  {
+                    "type": "mediaDeclaration",
+                    "condition": "(max-width: 600px)",
+                    "selector": ".cards",
+                    "property": "grid-template-columns",
+                    "value": "1fr"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
 }
