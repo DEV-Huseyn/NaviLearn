@@ -15,33 +15,39 @@ function LessonsJS() {
 
     const lesson = lessons[lessonIndex]
 
+    // Предыдущий и следующий урок
+    const previousLesson = lessons[lessonIndex - 1]
+    const nextLessonData = lessons[lessonIndex + 1]
+
+    // Проверка блокировки урока
+    const isLocked =
+        previousLesson &&
+        localStorage.getItem(
+            `js_lesson_${previousLesson.id}_completed`
+        ) !== 'true'
+
     const [answers, setAnswers] = useState({})
     const [results, setResults] = useState({})
     const [completed, setCompleted] = useState(false)
     const [showHint, setShowHint] = useState({})
     const [errors, setErrors] = useState({})
 
+    // Загрузка сохранённого прогресса
     useEffect(() => {
         if (!lesson) {
             navigate('/javascript')
             return
         }
 
-        if (lessonIndex > 0) {
-            const previousLesson = lessons[lessonIndex - 1]
-            const previousCompleted = localStorage.getItem(
-                `js_lesson_${previousLesson.id}_completed`
+        let savedResults = {}
+
+        try {
+            savedResults = JSON.parse(
+                localStorage.getItem(`js_lesson_${id}_results`) || '{}'
             )
-
-            if (previousCompleted !== 'true') {
-                navigate(`/javascript/lesson/${previousLesson.id}`)
-                return
-            }
+        } catch {
+            savedResults = {}
         }
-
-        const savedResults = JSON.parse(
-            localStorage.getItem(`js_lesson_${id}_results`) || '{}'
-        )
 
         setAnswers({})
         setResults(savedResults)
@@ -54,6 +60,32 @@ function LessonsJS() {
     }, [id])
 
     if (!lesson) return null
+
+    // Экран блокировки
+    if (isLocked) {
+        return (
+            <div className="min-h-screen bg-slate-950 text-white flex items-center justify-center p-6">
+                <div className="bg-slate-900 border border-slate-800 rounded-2xl p-8 max-w-md w-full text-center">
+
+                    <h2 className="text-2xl font-bold mb-4">
+                        🔒 Урок закрыт
+                    </h2>
+
+                    <p className="text-gray-400 mb-6">
+                        Сначала пройди предыдущий урок!
+                    </p>
+
+                    <button
+                        onClick={() => navigate('/javascript')}
+                        className="bg-blue-600 hover:bg-blue-500 cursor-pointer px-6 py-3 rounded-xl font-semibold transition"
+                    >
+                        Вернуться к урокам
+                    </button>
+
+                </div>
+            </div>
+        )
+    }
 
     const saveAnswer = (taskId, value) => {
         setAnswers(prev => ({
@@ -139,8 +171,13 @@ function LessonsJS() {
         setCompleted(true)
     }
 
+    // Переход к следующему уроку
     const nextLesson = () => {
-        navigate('/javascript')    
+        if (nextLessonData) {
+            navigate(`/javascript/lesson/${nextLessonData.id}`)
+        } else {
+            navigate('/course')
+        }
     }
 
     const completedCount = Object.values(results).filter(Boolean).length

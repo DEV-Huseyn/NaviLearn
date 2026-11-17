@@ -122,26 +122,30 @@ function Lessons() {
             `navilearn-css-${previousLesson.id}`
         ) !== 'true'
 
-    if (isLocked) {
-        return (
-            <div className="min-h-screen bg-slate-950 text-white flex flex-col items-center justify-center p-6">
-                <h2 className="text-2xl font-bold mb-3">
-                    Урок заблокирован
+if (isLocked) {
+    return (
+        <div className="min-h-screen bg-slate-950 text-white flex items-center justify-center p-6">
+            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-8 max-w-md w-full text-center">
+
+                <h2 className="text-2xl font-bold mb-4">
+                    🔒 Урок закрыт
                 </h2>
 
-                <p className="text-gray-400 mb-5 text-center">
-                    Сначала заверши предыдущий урок.
+                <p className="text-gray-400 mb-6">
+                    Сначала пройди предыдущий урок!
                 </p>
 
                 <button
                     onClick={() => navigate('/css')}
-                    className="bg-blue-600 hover:bg-blue-500 cursor-pointer px-6 py-3 rounded-xl"
+                    className="bg-blue-600 hover:bg-blue-500 cursor-pointer px-6 py-3 rounded-xl font-semibold transition"
                 >
-                    Назад к курсу
+                    Вернуться к урокам
                 </button>
+
             </div>
-        )
-    }
+        </div>
+    )
+}
 
     // Сохраняем CSS-код
     const saveCode = value => {
