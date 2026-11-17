@@ -122,27 +122,28 @@ function LessonsJS() {
                 return
             }
 
-            const normalize = value =>
-                value
-                    .toLowerCase()
-                    .replace(/\s+/g, '')
-                    .replace(/;/g, '')
+    const normalize = value =>
+    value
+        .toLowerCase()
+        .replace(/\s+/g, '')
+        .replace(/;/g, '')
 
-            const code = normalize(answer)
+const code = normalize(answer)
 
-            const isCorrect = (task.checks || []).every(check =>
-                code.includes(normalize(check))
-            )
+const isCorrect = (task.checks || []).every(check => {
+    const normalizedCheck = normalize(check)
 
-            if (!isCorrect) {
-                setErrors(prev => ({
-                    ...prev,
-                    [task.id]: 'Код пока не соответствует заданию. Проверь его!'
-                }))
-                return
-            }
-        }
+    if (normalizedCheck === 'leta=20') {
+        return /^(let|const|var)?a=20/.test(code)
+    }
 
+    if (normalizedCheck === 'letb=5') {
+        return /^(let|const|var)?a=20/.test(code) &&
+               /(let|const|var)?b=5/.test(code)
+    }
+
+    return code.includes(normalizedCheck)
+})
         const updatedResults = {
             ...results,
             [task.id]: true
