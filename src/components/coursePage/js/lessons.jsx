@@ -140,11 +140,7 @@ function LessonsJS() {
     }
 
     const nextLesson = () => {
-        if (lessonIndex === lessons.length - 1) {
-            navigate('/course')
-        } else {
-            navigate(`/javascript/lesson/${lessons[lessonIndex + 1].id}`)
-        }
+        navigate('/javascript')    
     }
 
     const completedCount = Object.values(results).filter(Boolean).length
