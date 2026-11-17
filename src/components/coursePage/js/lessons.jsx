@@ -60,6 +60,7 @@ function LessonsJS() {
         return (
             <div className="min-h-screen bg-slate-950 text-white flex items-center justify-center p-6">
                 <div className="bg-slate-900 border border-slate-800 rounded-2xl p-8 max-w-md w-full text-center">
+
                     <h2 className="text-2xl font-bold mb-4">
                         🔒 Урок закрыт
                     </h2>
@@ -74,11 +75,13 @@ function LessonsJS() {
                     >
                         Вернуться к урокам
                     </button>
+
                 </div>
             </div>
         )
     }
 
+    // Сохранение ответа
     const saveAnswer = (taskId, value) => {
         setAnswers(prev => ({
             ...prev,
@@ -91,10 +94,19 @@ function LessonsJS() {
         }))
     }
 
+    // Нормализация кода
+    const normalizeCode = value => {
+        return value
+            .toLowerCase()
+            .replace(/\s+/g, '')
+            .replace(/;/g, '')
+    }
+
     // Проверка задания
     const checkTask = task => {
         const answer = answers[task.id]
 
+        // Проверка вариантов ответа
         if (task.type === 'choice') {
             if (answer === undefined || answer === '') {
                 setErrors(prev => ({
@@ -104,7 +116,7 @@ function LessonsJS() {
                 return
             }
 
-            if (Number(answer) !== task.answer) {
+            if (Number(answer) !== Number(task.answer)) {
                 setErrors(prev => ({
                     ...prev,
                     [task.id]: 'Неправильный ответ. Попробуй ещё раз!'
@@ -113,6 +125,7 @@ function LessonsJS() {
             }
         }
 
+        // Проверка JavaScript кода
         if (task.type === 'code' || task.type === 'project') {
             if (!answer || !answer.trim()) {
                 setErrors(prev => ({
@@ -122,28 +135,39 @@ function LessonsJS() {
                 return
             }
 
-    const normalize = value =>
-    value
-        .toLowerCase()
-        .replace(/\s+/g, '')
-        .replace(/;/g, '')
+            const code = normalizeCode(answer)
 
-const code = normalize(answer)
+            const isCorrect = (task.checks || []).every(check => {
+                const normalizedCheck = normalizeCode(check)
 
-const isCorrect = (task.checks || []).every(check => {
-    const normalizedCheck = normalize(check)
+                // Разрешаем a = 20, let a = 20, const a = 20, var a = 20
+                if (normalizedCheck === 'leta=20') {
+                    return /(?:^|[^a-z0-9_$])(?:let|const|var)?a=20/.test(
+                        code
+                    )
+                }
 
-    if (normalizedCheck === 'leta=20') {
-        return /^(let|const|var)?a=20/.test(code)
-    }
+                // Разрешаем b = 5, let b = 5, const b = 5, var b = 5
+                if (normalizedCheck === 'letb=5') {
+                    return /(?:^|[^a-z0-9_$])(?:let|const|var)?b=5/.test(
+                        code
+                    )
+                }
 
-    if (normalizedCheck === 'letb=5') {
-        return /^(let|const|var)?a=20/.test(code) &&
-               /(let|const|var)?b=5/.test(code)
-    }
+                return code.includes(normalizedCheck)
+            })
 
-    return code.includes(normalizedCheck)
-})
+            // ВАЖНО: если код неправильный, НЕ засчитываем задание
+            if (!isCorrect) {
+                setErrors(prev => ({
+                    ...prev,
+                    [task.id]: 'Код пока не соответствует заданию. Проверь его!'
+                }))
+                return
+            }
+        }
+
+        // Засчитываем только правильный ответ
         const updatedResults = {
             ...results,
             [task.id]: true
@@ -162,6 +186,7 @@ const isCorrect = (task.checks || []).every(check => {
         }))
     }
 
+    // Проверка выполнения всех заданий
     const allTasksCompleted = lesson.tasks.every(
         task => results[task.id]
     )
@@ -178,7 +203,7 @@ const isCorrect = (task.checks || []).every(check => {
         setCompleted(true)
     }
 
-    // ВСЕГДА возвращаемся к списку JavaScript
+    // Всегда возвращаемся к списку JavaScript
     const backToLessons = () => {
         navigate('/javascript', { replace: true })
     }
@@ -191,6 +216,7 @@ const isCorrect = (task.checks || []).every(check => {
 
     return (
         <div className="min-h-screen bg-slate-950 text-white px-4 py-8 sm:px-6 lg:px-8">
+
             <div className="max-w-5xl mx-auto">
 
                 {/* HEADER */}
@@ -235,6 +261,7 @@ const isCorrect = (task.checks || []).every(check => {
                     </h2>
 
                     <div className="space-y-4">
+
                         {lesson.theory.map((item, index) => (
                             <div
                                 key={index}
@@ -249,6 +276,7 @@ const isCorrect = (task.checks || []).every(check => {
                                 </p>
                             </div>
                         ))}
+
                     </div>
                 </section>
 
@@ -263,6 +291,7 @@ const isCorrect = (task.checks || []).every(check => {
                         <pre className="overflow-x-auto rounded-xl border border-slate-700 bg-[#080e1b] p-5 text-sm leading-7 text-cyan-300">
                             <code>{lesson.example}</code>
                         </pre>
+
                     </section>
                 )}
 
@@ -274,13 +303,16 @@ const isCorrect = (task.checks || []).every(check => {
                     </h2>
 
                     <div className="space-y-6">
+
                         {lesson.tasks.map((task, index) => (
+
                             <div
                                 key={task.id}
                                 className="rounded-2xl border border-slate-700 bg-slate-800/70 p-5 transition hover:border-blue-500/50 sm:p-6"
                             >
 
                                 <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+
                                     <h3 className="text-lg font-bold text-white">
                                         Задание {index + 1}: {task.title}
                                     </h3>
@@ -290,6 +322,7 @@ const isCorrect = (task.checks || []).every(check => {
                                             ✓ Выполнено
                                         </span>
                                     )}
+
                                 </div>
 
                                 <p className="mb-5 whitespace-pre-line text-sm leading-7 text-slate-300 sm:text-base">
@@ -299,7 +332,9 @@ const isCorrect = (task.checks || []).every(check => {
                                 {/* CHOICE */}
                                 {task.type === 'choice' && (
                                     <div className="mb-5 flex flex-col gap-3">
+
                                         {task.options.map((option, optionIndex) => (
+
                                             <button
                                                 key={optionIndex}
                                                 onClick={() => saveAnswer(task.id, optionIndex)}
@@ -313,9 +348,12 @@ const isCorrect = (task.checks || []).every(check => {
                                                 <span className="mr-3 font-bold text-blue-400">
                                                     {String.fromCharCode(65 + optionIndex)}.
                                                 </span>
+
                                                 {option}
                                             </button>
+
                                         ))}
+
                                     </div>
                                 )}
 
@@ -342,6 +380,7 @@ const isCorrect = (task.checks || []).every(check => {
                                             spellCheck={false}
                                             className="w-full resize-y rounded-xl border border-slate-700 bg-[#080e1b] p-5 font-mono text-sm leading-7 text-cyan-300 outline-none transition placeholder:text-slate-600 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10 disabled:opacity-60"
                                         />
+
                                     </div>
                                 )}
 
@@ -380,6 +419,7 @@ const isCorrect = (task.checks || []).every(check => {
                                     >
                                         {results[task.id] ? '✓ Выполнено' : 'Проверить ответ'}
                                     </button>
+
                                 </div>
 
                                 {/* SUCCESS */}
@@ -388,8 +428,11 @@ const isCorrect = (task.checks || []).every(check => {
                                         ✓ Отлично! Задание выполнено.
                                     </div>
                                 )}
+
                             </div>
+
                         ))}
+
                     </div>
                 </section>
 
@@ -407,6 +450,7 @@ const isCorrect = (task.checks || []).every(check => {
                         <span className="rounded-xl border border-yellow-500/20 bg-yellow-500/10 px-4 py-3 text-sm font-bold text-yellow-400">
                             🏆 {lesson.exp} EXP
                         </span>
+
                     </div>
 
                     {!completed && (
@@ -433,7 +477,9 @@ const isCorrect = (task.checks || []).every(check => {
                             Выполни все задания, чтобы завершить урок.
                         </p>
                     )}
+
                 </section>
+
             </div>
         </div>
     )
