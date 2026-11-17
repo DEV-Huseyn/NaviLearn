@@ -209,26 +209,6 @@ function Lessons() {
             completedTasks.includes(item.id)
         )
 
-    // Переход к следующему заданию или завершение урока
-    const nextTask = () => {
-        if (!isCorrect) return
-
-        if (taskIndex < lesson.tasks.length - 1) {
-            setTaskIndex(prev => prev + 1)
-            return
-        }
-
-        if (!allTasksCompleted) return
-
-        // Отмечаем урок завершённым
-        localStorage.setItem(storageKey, 'true')
-
-        // Последний урок возвращает пользователя к курсам
-        if (!nextLesson) {
-            navigate('/css')
-            return
-        }
-    }
 
     // HTML для предпросмотра CSS
     const htmlTemplate = `
@@ -466,7 +446,7 @@ function Lessons() {
                             )}
 
                             <button
-                                onClick={nextTask}
+                                onClick={()=>{navigate('/css')}}
                                 disabled={!isCorrect}
                                 className="flex-1 bg-emerald-600 hover:bg-emerald-500 disabled:bg-slate-700 disabled:text-gray-500 disabled:cursor-not-allowed cursor-pointer py-3 rounded-xl font-semibold transition"
                             >
