@@ -7,11 +7,10 @@ function LessonsJS() {
   const { id } = useParams()
   const navigate = useNavigate()
 
-  const course = javascriptCourse.course
-  const lessons = course.modules.flatMap(module => module.lessons)
+  const lessons = javascriptCourse.lessons || []
 
   const lessonIndex = lessons.findIndex(
-    item => item.id === Number(id)
+    item => String(item.id) === String(id)
   )
 
   const lesson = lessons[lessonIndex]
@@ -19,7 +18,6 @@ function LessonsJS() {
   const [answers, setAnswers] = useState({})
   const [results, setResults] = useState({})
   const [completed, setCompleted] = useState(false)
-
   const [showHint, setShowHint] = useState({})
   const [errors, setErrors] = useState({})
 
@@ -37,13 +35,19 @@ function LessonsJS() {
 
       if (previousCompleted !== 'true') {
         navigate(`/javascript/lesson/${previousLesson.id}`)
+        return
       }
     }
 
+    const savedResults = JSON.parse(
+      localStorage.getItem(`js_lesson_${id}_results`) || '{}'
+    )
+
     setAnswers({})
-    setResults({})
+    setResults(savedResults)
     setShowHint({})
     setErrors({})
+
     setCompleted(
       localStorage.getItem(`js_lesson_${id}_completed`) === 'true'
     )
@@ -82,7 +86,7 @@ function LessonsJS() {
         }))
         return
       }
-    } else {
+    } else if (task.type === 'code' || task.type === 'project') {
       if (!answer || !answer.trim()) {
         setErrors(prev => ({
           ...prev,
@@ -93,7 +97,7 @@ function LessonsJS() {
 
       const code = answer.toLowerCase()
 
-      const isCorrect = task.checks.every(check =>
+      const isCorrect = (task.checks || []).every(check =>
         code.includes(check.toLowerCase())
       )
 
@@ -106,15 +110,17 @@ function LessonsJS() {
       }
     }
 
-    if (!results[task.id]) {
-      // Здесь подключается твоя существующая функция начисления XP через API.
-      // Размер награды: task.xpReward
+    const updatedResults = {
+      ...results,
+      [task.id]: true
     }
 
-    setResults(prev => ({
-      ...prev,
-      [task.id]: true
-    }))
+    setResults(updatedResults)
+
+    localStorage.setItem(
+      `js_lesson_${id}_results`,
+      JSON.stringify(updatedResults)
+    )
 
     setErrors(prev => ({
       ...prev,
@@ -133,10 +139,15 @@ function LessonsJS() {
     setCompleted(true)
   }
 
-  const totalXP = lesson.tasks.reduce(
-    (total, task) => total + (results[task.id] ? task.xpReward : 0),
-    0
-  )
+  const nextLesson = () => {
+    if (lessonIndex === lessons.length - 1) {
+      navigate('/course')
+    } else {
+      navigate(`/javascript/lesson/${lessons[lessonIndex + 1].id}`)
+    }
+  }
+
+  const completedCount = Object.values(results).filter(Boolean).length
 
   return (
     <div className="lesson-container">
@@ -170,13 +181,9 @@ function LessonsJS() {
       <div className="lesson-example">
         <h2>💻 Пример кода</h2>
 
-        <h3>{lesson.example.title}</h3>
-
         <pre>
-          <code>{lesson.example.code}</code>
+          <code>{lesson.example}</code>
         </pre>
-
-        <p>{lesson.example.description}</p>
       </div>
 
       <div className="lesson-practice">
@@ -199,9 +206,7 @@ function LessonsJS() {
                     onClick={() => saveAnswer(task.id, optionIndex)}
                     disabled={results[task.id]}
                     className={
-                      answers[task.id] === optionIndex
-                        ? 'selected'
-                        : ''
+                      answers[task.id] === optionIndex ? 'selected' : ''
                     }
                     style={{ cursor: 'pointer' }}
                   >
@@ -213,7 +218,7 @@ function LessonsJS() {
 
             {(task.type === 'code' || task.type === 'project') && (
               <textarea
-                value={answers[task.id] || task.initialCode || ''}
+                value={answers[task.id] || ''}
                 onChange={e => saveAnswer(task.id, e.target.value)}
                 disabled={results[task.id]}
                 placeholder="Напиши свой JavaScript код..."
@@ -257,7 +262,7 @@ function LessonsJS() {
 
             {results[task.id] && (
               <p className="task-success">
-                ✓ Отлично! +{task.xpReward} XP
+                ✓ Отлично! Задание выполнено.
               </p>
             )}
 
@@ -268,12 +273,10 @@ function LessonsJS() {
       <div className="lesson-footer">
 
         <p>
-          Выполнено: {Object.values(results).filter(Boolean).length}
-          {' / '}
-          {lesson.tasks.length}
+          Выполнено: {completedCount} / {lesson.tasks.length}
         </p>
 
-        <p>Получено XP: {totalXP}</p>
+        <p>Награда за урок: {lesson.exp} EXP</p>
 
         {!completed && (
           <button

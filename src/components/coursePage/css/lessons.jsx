@@ -1,88 +1,24 @@
 
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router'
 import cssCourse from './css.json'
 
+// Проверка CSS-кода по строкам из JSON
 function checkCSS(code, checks = []) {
     if (!checks.length) return false
 
-    return checks.every((check) => {
-        const selector = check.selector || check.target || ''
-        const property = check.property || check.name || ''
-        const value = check.value || ''
+    const normalizedCode = code
+        .toLowerCase()
+        .replace(/\s+/g, ' ')
+        .trim()
 
-        switch (check.type) {
-            case 'declaration': {
-                const escapedProperty = property.replace(
-                    /[.*+?^${}()|[\]\\]/g,
-                    '\\$&'
-                )
+    return checks.every(check => {
+        const normalizedCheck = check
+            .toLowerCase()
+            .replace(/\s+/g, ' ')
+            .trim()
 
-                const pattern = new RegExp(
-                    `${escapedProperty}\\s*:\\s*${value ? value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') : '[^;}]+'}`,
-                    'i'
-                )
-
-                if (selector) {
-                    const blocks = code.match(/[^{}]+\{[^{}]*\}/g) || []
-
-                    return blocks.some((block) => {
-                        const blockSelector = block
-                            .slice(0, block.indexOf('{'))
-                            .trim()
-
-                        return (
-                            blockSelector.includes(selector) &&
-                            pattern.test(block)
-                        )
-                    })
-                }
-
-                return pattern.test(code)
-            }
-
-            case 'mediaRuleExists': {
-                const media = check.media || check.query || value
-                return new RegExp(
-                    `@media\\s*${media.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`,
-                    'i'
-                ).test(code)
-            }
-
-            case 'mediaDeclaration': {
-                const media = check.media || check.query || ''
-                const escapedProperty = property.replace(
-                    /[.*+?^${}()|[\]\\]/g,
-                    '\\$&'
-                )
-
-                const mediaBlocks = code.match(/@media[^{]*\{(?:[^{}]*|\{[^{}]*\})*\}/gi) || []
-
-                return mediaBlocks.some((block) => {
-                    if (media && !block.includes(media)) return false
-
-                    if (selector && !block.includes(selector)) return false
-
-                    const declaration = new RegExp(
-                        `${escapedProperty}\\s*:\\s*${value ? value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') : '[^;}]+'}`,
-                        'i'
-                    )
-
-                    return declaration.test(block)
-                })
-            }
-
-            case 'variableExists': {
-                const variable = check.variable || check.name || value
-                return new RegExp(
-                    `--${variable.replace(/^--/, '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\s*:`,
-                    'i'
-                ).test(code)
-            }
-
-            default:
-                return false
-        }
+        return normalizedCode.includes(normalizedCheck)
     })
 }
 
@@ -90,52 +26,49 @@ function Lessons() {
     const { id } = useParams()
     const navigate = useNavigate()
 
-    const course = cssCourse.course
-
-    const lessons = useMemo(
-        () => course.modules.flatMap((module) => module.lessons),
-        []
-    )
+    // Уроки находятся прямо в css.json
+    const lessons = cssCourse.lessons || []
 
     const lessonIndex = lessons.findIndex(
-        (item) => String(item.id) === String(id)
+        item => String(item.id) === String(id)
     )
 
     const lesson = lessons[lessonIndex]
+    const previousLesson = lessons[lessonIndex - 1]
+    const nextLesson = lessons[lessonIndex + 1]
+
+    const storageKey = `navilearn-css-${id}`
 
     const [taskIndex, setTaskIndex] = useState(0)
     const [code, setCode] = useState('')
+    const [selectedOption, setSelectedOption] = useState(null)
     const [completedTasks, setCompletedTasks] = useState([])
     const [isCorrect, setIsCorrect] = useState(false)
     const [showError, setShowError] = useState(false)
 
-    const storageKey = `navilearn-css-${id}`
     const task = lesson?.tasks?.[taskIndex]
 
+    // Загружаем прогресс при открытии урока
     useEffect(() => {
         if (!lesson) return
 
+        let savedTasks = []
+
+        try {
+            savedTasks = JSON.parse(
+                localStorage.getItem(`${storageKey}-tasks`) || '[]'
+            )
+        } catch {
+            savedTasks = []
+        }
+
+        setCompletedTasks(savedTasks)
         setTaskIndex(0)
         setIsCorrect(false)
         setShowError(false)
-
-        const savedTasks = JSON.parse(
-            localStorage.getItem(`${storageKey}-tasks`) || '[]'
-        )
-
-        setCompletedTasks(savedTasks)
-
-        const firstTask = lesson.tasks?.[0]
-
-        setCode(
-            firstTask
-                ? localStorage.getItem(
-                    `${storageKey}-${firstTask.id}-code`
-                ) || firstTask.initialCode || ''
-                : ''
-        )
     }, [id])
 
+    // Загружаем сохранённый код и ответ текущего задания
     useEffect(() => {
         if (!task) return
 
@@ -143,14 +76,23 @@ function Lessons() {
             `${storageKey}-${task.id}-code`
         )
 
+        const savedOption = localStorage.getItem(
+            `${storageKey}-${task.id}-option`
+        )
+
         setCode(savedCode ?? task.initialCode ?? '')
+        setSelectedOption(
+            savedOption !== null ? Number(savedOption) : null
+        )
+
         setIsCorrect(completedTasks.includes(task.id))
         setShowError(false)
-    }, [taskIndex, id])
+    }, [taskIndex, id, completedTasks])
 
+    // Урок не найден
     if (!lesson) {
         return (
-            <div className="min-h-screen bg-slate-950 text-white flex items-center justify-center">
+            <div className="min-h-screen bg-slate-950 text-white flex items-center justify-center p-6">
                 <div className="text-center">
                     <h2 className="text-2xl font-bold mb-4">
                         Урок не найден
@@ -167,8 +109,7 @@ function Lessons() {
         )
     }
 
-    const previousLesson = lessons[lessonIndex - 1]
-
+    // Проверяем, завершён ли предыдущий урок
     const isLocked =
         previousLesson &&
         localStorage.getItem(
@@ -182,7 +123,7 @@ function Lessons() {
                     Урок заблокирован
                 </h2>
 
-                <p className="text-gray-400 mb-5">
+                <p className="text-gray-400 mb-5 text-center">
                     Сначала заверши предыдущий урок.
                 </p>
 
@@ -196,29 +137,33 @@ function Lessons() {
         )
     }
 
-    const saveCode = (value) => {
+    // Сохраняем CSS-код
+    const saveCode = value => {
         setCode(value)
 
-        localStorage.setItem(
-            `${storageKey}-${task.id}-code`,
-            value
-        )
+        if (task) {
+            localStorage.setItem(
+                `${storageKey}-${task.id}-code`,
+                value
+            )
+        }
     }
 
-    const checkTask = () => {
-        if (!task) return
+    // Сохраняем выбранный вариант ответа
+    const selectOption = index => {
+        setSelectedOption(index)
 
-        const result = checkCSS(code, task.checks)
+        localStorage.setItem(
+            `${storageKey}-${task.id}-option`,
+            String(index)
+        )
 
-        if (!result) {
-            setIsCorrect(false)
-            setShowError(true)
-            return
-        }
-
-        setIsCorrect(true)
+        setIsCorrect(false)
         setShowError(false)
+    }
 
+    // Сохраняем выполненное задание
+    const completeTask = () => {
         const updatedTasks = completedTasks.includes(task.id)
             ? completedTasks
             : [...completedTasks, task.id]
@@ -229,59 +174,96 @@ function Lessons() {
             `${storageKey}-tasks`,
             JSON.stringify(updatedTasks)
         )
+
+        setIsCorrect(true)
+        setShowError(false)
     }
 
+    // Проверяем задание
+    const checkTask = () => {
+        if (!task) return
+
+        let result = false
+
+        if (task.type === 'choice') {
+            result = selectedOption === task.answer
+        }
+
+        if (task.type === 'code') {
+            result = checkCSS(code, task.checks)
+        }
+
+        if (!result) {
+            setIsCorrect(false)
+            setShowError(true)
+            return
+        }
+
+        completeTask()
+    }
+
+    // Проверяем, выполнены ли все задания
+    const allTasksCompleted =
+        lesson.tasks?.length > 0 &&
+        lesson.tasks.every(item =>
+            completedTasks.includes(item.id)
+        )
+
+    // Переход к следующему заданию или завершение урока
     const nextTask = () => {
         if (!isCorrect) return
 
         if (taskIndex < lesson.tasks.length - 1) {
-            const nextIndex = taskIndex + 1
-            const next = lesson.tasks[nextIndex]
-
-            setTaskIndex(nextIndex)
-            setCode(
-                localStorage.getItem(
-                    `${storageKey}-${next.id}-code`
-                ) || next.initialCode || ''
-            )
-
-            setIsCorrect(completedTasks.includes(next.id))
-            setShowError(false)
-
+            setTaskIndex(prev => prev + 1)
             return
         }
 
-        const allTasksCompleted = lesson.tasks.every(
-            (item) => completedTasks.includes(item.id)
-        )
-
         if (!allTasksCompleted) return
 
+        // Отмечаем урок завершённым
         localStorage.setItem(storageKey, 'true')
 
+        // Последний урок возвращает пользователя к курсам
+        if (!nextLesson) {
+            navigate('/course')
+            return
+        }
+
+        // Переходим к следующему уроку CSS
+        navigate(`/css/lesson/${nextLesson.id}`)
     }
 
-    const htmlTemplate = lesson.htmlTemplate || `
+    // HTML для предпросмотра CSS
+    const htmlTemplate = `
         <!DOCTYPE html>
-        <html>
+        <html lang="ru">
         <head>
             <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <title>CSS Preview</title>
         </head>
+
         <body>
             <h1>Моя первая CSS-страница</h1>
             <p>Здесь появится результат твоего CSS-кода.</p>
             <button>Нажми меня</button>
+            <div class="card">Моя карточка</div>
+            <div class="container">
+                <div class="box">1</div>
+                <div class="box">2</div>
+                <div class="box">3</div>
+            </div>
         </body>
         </html>
     `
 
     const preview = htmlTemplate.replace(
-        /<\/head>/i,
+        '</head>',
         `<style>${code}</style></head>`
     )
 
-    const progress = lesson.tasks.length
+    // Прогресс заданий
+    const progress = lesson.tasks?.length
         ? Math.round(
             (completedTasks.length / lesson.tasks.length) * 100
         )
@@ -291,6 +273,7 @@ function Lessons() {
         <div className="min-h-screen bg-slate-950 text-white p-4 md:p-8">
             <div className="max-w-5xl mx-auto">
 
+                {/* Назад к курсу */}
                 <button
                     onClick={() => navigate('/css')}
                     className="text-blue-400 hover:text-blue-300 cursor-pointer mb-6"
@@ -298,8 +281,7 @@ function Lessons() {
                     ← Назад к курсу
                 </button>
 
-                {/* Заголовок */}
-
+                {/* Заголовок урока */}
                 <div className="mb-8">
                     <p className="text-blue-400 text-sm mb-2">
                         CSS · Урок {lessonIndex + 1} из {lessons.length}
@@ -309,9 +291,14 @@ function Lessons() {
                         {lesson.title}
                     </h1>
 
-                    <div className="w-full bg-slate-800 rounded-full h-2 mt-5">
+                    <p className="text-gray-400">
+                        {lesson.description}
+                    </p>
+
+                    {/* Прогресс */}
+                    <div className="w-full bg-slate-800 rounded-full h-2 mt-5 overflow-hidden">
                         <div
-                            className="bg-blue-500 h-2 rounded-full transition-all"
+                            className="bg-blue-500 h-2 rounded-full transition-all duration-300"
                             style={{ width: `${progress}%` }}
                         />
                     </div>
@@ -322,33 +309,40 @@ function Lessons() {
                 </div>
 
                 {/* Теория */}
-
                 <section className="bg-slate-900 border border-slate-800 rounded-2xl p-6 mb-6">
-                    <h2 className="text-xl font-bold mb-4">
+                    <h2 className="text-xl font-bold mb-5">
                         Теория
                     </h2>
 
-                    <p className="text-gray-300 whitespace-pre-line leading-7">
-                        {lesson.theory}
-                    </p>
+                    <div className="space-y-5">
+                        {lesson.theory?.map((item, index) => (
+                            <div key={index}>
+                                <h3 className="text-blue-400 font-semibold mb-2">
+                                    {item.title}
+                                </h3>
+
+                                <p className="text-gray-300 leading-7">
+                                    {item.text}
+                                </p>
+                            </div>
+                        ))}
+                    </div>
                 </section>
 
                 {/* Пример */}
-
                 {lesson.example && (
                     <section className="bg-slate-900 border border-slate-800 rounded-2xl p-6 mb-6">
                         <h2 className="text-xl font-bold mb-4 text-blue-400">
-                            Пример
+                            Пример кода
                         </h2>
 
                         <pre className="bg-slate-950 border border-slate-800 rounded-xl p-4 overflow-x-auto text-sm text-blue-300 whitespace-pre-wrap">
-                            {lesson.example}
+                            <code>{lesson.example}</code>
                         </pre>
                     </section>
                 )}
 
                 {/* Практика */}
-
                 {task && (
                     <section className="bg-slate-900 border border-slate-800 rounded-2xl p-6">
 
@@ -370,65 +364,109 @@ function Lessons() {
                             {task.description}
                         </p>
 
-                        {/* Редактор */}
+                        {/* Задание с вариантами ответа */}
+                        {task.type === 'choice' && (
+                            <div className="space-y-3 mb-6">
+                                {task.options?.map((option, index) => (
+                                    <button
+                                        key={index}
+                                        onClick={() => selectOption(index)}
+                                        disabled={completedTasks.includes(task.id)}
+                                        className={`w-full text-left p-4 rounded-xl border transition cursor-pointer
+                                            ${selectedOption === index
+                                                ? 'bg-blue-600/20 border-blue-500 text-white'
+                                                : 'bg-slate-950 border-slate-700 hover:border-blue-500 text-gray-300'
+                                            }
+                                            disabled:cursor-not-allowed
+                                        `}
+                                    >
+                                        <span className="mr-3 text-blue-400">
+                                            {String.fromCharCode(65 + index)}.
+                                        </span>
 
-                        <div className="mb-6">
-                            <div className="flex items-center justify-between mb-2">
-                                <label className="font-semibold text-sm">
-                                    Твой CSS-код
-                                </label>
-
-                                <span className="text-gray-500 text-xs">
-                                    CSS Editor
-                                </span>
-                            </div>
-
-                            <textarea
-                                value={code}
-                                onChange={(e) => saveCode(e.target.value)}
-                                placeholder="Напиши свой CSS-код здесь..."
-                                spellCheck={false}
-                                className="w-full min-h-[250px] resize-y bg-[#080d18] border border-slate-700 rounded-xl p-4 text-blue-300 font-mono text-sm outline-none focus:border-blue-500"
-                            />
-                        </div>
-
-                        {/* Предпросмотр */}
-
-                        <div className="mb-6">
-                            <h3 className="font-semibold mb-3">
-                                Предпросмотр
-                            </h3>
-
-                            <iframe
-                                title="CSS Preview"
-                                srcDoc={preview}
-                                sandbox=""
-                                className="w-full h-[300px] bg-white rounded-xl border border-slate-700"
-                            />
-                        </div>
-
-                        {/* Проверка */}
-
-                        {showError && (
-                            <div className="bg-red-500/10 border border-red-500/30 text-red-400 p-4 rounded-xl mb-4">
-                                Пока неправильно. Проверь CSS-код и попробуй ещё раз.
+                                        {option}
+                                    </button>
+                                ))}
                             </div>
                         )}
 
+                        {/* CSS-редактор */}
+                        {task.type === 'code' && (
+                            <>
+                                <div className="mb-6">
+                                    <div className="flex items-center justify-between mb-2">
+                                        <label className="font-semibold text-sm">
+                                            Твой CSS-код
+                                        </label>
+
+                                        <span className="text-gray-500 text-xs">
+                                            CSS Editor
+                                        </span>
+                                    </div>
+
+                                    <textarea
+                                        value={code}
+                                        onChange={e => saveCode(e.target.value)}
+                                        placeholder="Напиши свой CSS-код здесь..."
+                                        spellCheck={false}
+                                        disabled={completedTasks.includes(task.id)}
+                                        className="w-full min-h-[250px] resize-y bg-[#080d18] border border-slate-700 rounded-xl p-4 text-blue-300 font-mono text-sm outline-none focus:border-blue-500 disabled:opacity-70"
+                                    />
+                                </div>
+
+                                {/* Предпросмотр */}
+                                <div className="mb-6">
+                                    <h3 className="font-semibold mb-3">
+                                        Предпросмотр
+                                    </h3>
+
+                                    <iframe
+                                        title="CSS Preview"
+                                        srcDoc={preview}
+                                        sandbox=""
+                                        className="w-full h-[300px] bg-white rounded-xl border border-slate-700"
+                                    />
+                                </div>
+                            </>
+                        )}
+
+                        {/* Подсказка */}
+                        {task.hint && (
+                            <details className="mb-5 bg-blue-500/10 border border-blue-500/20 rounded-xl p-4">
+                                <summary className="text-blue-400 cursor-pointer font-semibold">
+                                    Подсказка
+                                </summary>
+
+                                <p className="text-gray-300 mt-3">
+                                    {task.hint}
+                                </p>
+                            </details>
+                        )}
+
+                        {/* Ошибка */}
+                        {showError && (
+                            <div className="bg-red-500/10 border border-red-500/30 text-red-400 p-4 rounded-xl mb-4">
+                                Пока неправильно. Проверь ответ и попробуй ещё раз.
+                            </div>
+                        )}
+
+                        {/* Успех */}
                         {isCorrect && (
                             <div className="bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 p-4 rounded-xl mb-4">
                                 Отлично! Задание выполнено.
-                                {task.xpReward ? ` Награда: ${task.xpReward} XP.` : ''}
                             </div>
                         )}
 
+                        {/* Кнопки */}
                         <div className="flex flex-col sm:flex-row gap-3">
-                            <button
-                                onClick={checkTask}
-                                className="flex-1 bg-blue-600 hover:bg-blue-500 cursor-pointer py-3 rounded-xl font-semibold transition"
-                            >
-                                Проверить
-                            </button>
+                            {!completedTasks.includes(task.id) && (
+                                <button
+                                    onClick={checkTask}
+                                    className="flex-1 bg-blue-600 hover:bg-blue-500 cursor-pointer py-3 rounded-xl font-semibold transition"
+                                >
+                                    Проверить
+                                </button>
+                            )}
 
                             <button
                                 onClick={nextTask}
@@ -437,9 +475,23 @@ function Lessons() {
                             >
                                 {taskIndex === lesson.tasks.length - 1
                                     ? 'Завершить урок'
-                                    : 'Следующее задание →'}
+                                    : 'Следующее задание →'
+                                }
                             </button>
                         </div>
+
+                        {/* Завершение */}
+                        {allTasksCompleted && (
+                            <div className="mt-5 p-4 bg-emerald-500/10 border border-emerald-500/30 rounded-xl">
+                                <p className="text-emerald-400 font-semibold">
+                                    Все задания этого урока выполнены!
+                                </p>
+
+                                <p className="text-gray-400 text-sm mt-1">
+                                    Нажми «Завершить урок», чтобы продолжить обучение.
+                                </p>
+                            </div>
+                        )}
                     </section>
                 )}
 
