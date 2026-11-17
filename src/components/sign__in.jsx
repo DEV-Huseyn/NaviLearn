@@ -38,7 +38,7 @@ const Sign__in = ({ setIsLoggedIn }) => {
                 localStorage.setItem("token", result.data.token);
                 localStorage.setItem("userId", result.data.user.id);
                 setIsLoggedIn(true);
-                alert("Вы успешно вошли!");
+                // alert("Вы успешно вошли!");
             
                 setInpEmail("");
                 setInpPassword("");
@@ -46,16 +46,16 @@ const Sign__in = ({ setIsLoggedIn }) => {
             navigate("/course");
             
             } else {
-                alert(result.message || "Неверная почта или пароль!");
+                // alert(result.message || "Неверная почта или пароль!");
             }
           
         } catch (error) {
             console.error("Login error:", error.response?.data || error.message);
         
-            alert(
-                error.response?.data?.message ||
-                "Ошибка подключения к серверу!"
-            );
+            // alert(
+            //     error.response?.data?.message ||
+            //     "Ошибка подключения к серверу!"
+            // );
         }
     };
 

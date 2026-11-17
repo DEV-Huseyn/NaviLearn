@@ -39,7 +39,7 @@ const userSearch = async (e) => {
         console.log('Register response:', result)
         if (result.success) {
         
-            alert("Регистрация прошла успешно!")
+            // alert("Регистрация прошла успешно!")
         
             setInpName("")
             setInpEmail("")
@@ -59,7 +59,7 @@ const userSearch = async (e) => {
             }
           
         } else {
-            alert(result.message || "Ошибка регистрации!")
+            // alert(result.message || "Ошибка регистрации!")
         }
     } catch (error) {
         console.error(
@@ -67,10 +67,10 @@ const userSearch = async (e) => {
             error.response?.data || error.message
         )
 
-        alert(
-            error.response?.data?.message ||
-            "Ошибка подключения к серверу!"
-        )
+        // alert(
+        //     error.response?.data?.message ||
+        //     "Ошибка подключения к серверу!"
+        // )
     }
 }
 
