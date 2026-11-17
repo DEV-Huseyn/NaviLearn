@@ -4,15 +4,23 @@ import { useParams, useNavigate } from 'react-router'
 import cssCourse from './css.json'
 
 function checkCSS(code, checks = []) {
-    if (!checks.length) return false
+    if (!Array.isArray(checks) || checks.length === 0) return false
 
-    const normalizedCode = code.toLowerCase().replace(/\s+/g, ' ').trim()
+    const normalizedCode = code
+        .toLowerCase()
+        .replace(/\s+/g, ' ')
+        .trim()
 
-    return checks.every(check =>
-        normalizedCode.includes(
-            check.toLowerCase().replace(/\s+/g, ' ').trim()
-        )
-    )
+    return checks.every(check => {
+        if (typeof check !== 'string') return false
+
+        const normalizedCheck = check
+            .toLowerCase()
+            .replace(/\s+/g, ' ')
+            .trim()
+
+        return normalizedCode.includes(normalizedCheck)
+    })
 }
 
 function Lessons() {
@@ -29,6 +37,7 @@ function Lessons() {
     const previousLesson = lessons[lessonIndex - 1]
     const nextLesson = lessons[lessonIndex + 1]
 
+    const tasks = lesson?.tasks || []
     const storageKey = `navilearn-css-${id}`
 
     const [taskIndex, setTaskIndex] = useState(0)
@@ -38,9 +47,9 @@ function Lessons() {
     const [isCorrect, setIsCorrect] = useState(false)
     const [showError, setShowError] = useState(false)
 
-    const task = lesson?.tasks?.[taskIndex]
+    const task = tasks[taskIndex]
 
-    // Загружаем прогресс урока
+    // Загружаем прогресс при открытии урока
     useEffect(() => {
         if (!lesson) return
 
@@ -50,6 +59,10 @@ function Lessons() {
             savedTasks = JSON.parse(
                 localStorage.getItem(`${storageKey}-tasks`) || '[]'
             )
+
+            if (!Array.isArray(savedTasks)) {
+                savedTasks = []
+            }
         } catch {
             savedTasks = []
         }
@@ -60,7 +73,7 @@ function Lessons() {
         setShowError(false)
     }, [id])
 
-    // Загружаем код и выбранный ответ
+    // Загружаем сохранённый код и ответ задания
     useEffect(() => {
         if (!task) return
 
@@ -73,6 +86,7 @@ function Lessons() {
         )
 
         setCode(savedCode ?? task.initialCode ?? '')
+
         setSelectedOption(
             savedOption !== null ? Number(savedOption) : null
         )
@@ -81,6 +95,7 @@ function Lessons() {
         setShowError(false)
     }, [taskIndex, id, completedTasks])
 
+    // Урок не найден
     if (!lesson) {
         return (
             <div className="min-h-screen bg-slate-950 text-white flex items-center justify-center p-6">
@@ -100,8 +115,9 @@ function Lessons() {
         )
     }
 
-    // Блокировка урока
-    const isLocked = previousLesson &&
+    // Проверяем, завершён ли предыдущий урок
+    const isLocked =
+        previousLesson &&
         localStorage.getItem(
             `navilearn-css-${previousLesson.id}`
         ) !== 'true'
@@ -127,7 +143,7 @@ function Lessons() {
         )
     }
 
-    // Сохраняем код
+    // Сохраняем CSS-код
     const saveCode = value => {
         setCode(value)
 
@@ -139,8 +155,10 @@ function Lessons() {
         }
     }
 
-    // Выбираем ответ
+    // Сохраняем выбранный вариант ответа
     const selectOption = index => {
+        if (!task || completedTasks.includes(task.id)) return
+
         setSelectedOption(index)
 
         localStorage.setItem(
@@ -152,14 +170,13 @@ function Lessons() {
         setShowError(false)
     }
 
-    // Завершаем задание
+    // Сохраняем выполненное задание
     const completeTask = () => {
-        if (completedTasks.includes(task.id)) {
-            setIsCorrect(true)
-            return
-        }
+        if (!task) return
 
-        const updatedTasks = [...completedTasks, task.id]
+        const updatedTasks = completedTasks.includes(task.id)
+            ? completedTasks
+            : [...completedTasks, task.id]
 
         setCompletedTasks(updatedTasks)
 
@@ -172,7 +189,7 @@ function Lessons() {
         setShowError(false)
     }
 
-    // Проверяем ответ
+    // Проверяем задание
     const checkTask = () => {
         if (!task) return
 
@@ -197,37 +214,35 @@ function Lessons() {
 
     // Проверяем выполнение всех заданий
     const allTasksCompleted =
-        lesson.tasks?.length > 0 &&
-        lesson.tasks.every(item =>
-            completedTasks.includes(item.id)
-        )
+        tasks.length > 0 &&
+        tasks.every(item => completedTasks.includes(item.id))
 
     // Переход к следующему заданию или уроку
     const handleNext = () => {
         if (!isCorrect || !task) return
 
-        // Если есть ещё задания в этом уроке
-        if (taskIndex < lesson.tasks.length - 1) {
+        // Если есть следующее задание в этом уроке
+        if (taskIndex < tasks.length - 1) {
             setTaskIndex(prev => prev + 1)
             return
         }
 
-        // Проверяем, действительно ли все задания выполнены
+        // Последнее задание: проверяем весь урок
         if (!allTasksCompleted) return
 
-        // Сохраняем завершение урока
+        // Отмечаем урок завершённым
         localStorage.setItem(storageKey, 'true')
 
-        // Открываем следующий урок
+        // Переходим к следующему уроку
         if (nextLesson) {
             navigate(`/css/lesson/${nextLesson.id}`)
         } else {
-            // Последний урок курса
+            // Если это последний урок курса
             navigate('/course')
         }
     }
 
-    // HTML для предпросмотра
+    // HTML для предпросмотра CSS
     const htmlTemplate = `
         <!DOCTYPE html>
         <html lang="ru">
@@ -255,9 +270,10 @@ function Lessons() {
         `<style>${code}</style></head>`
     )
 
-    const progress = lesson.tasks?.length
+    // Прогресс
+    const progress = tasks.length
         ? Math.round(
-            (completedTasks.length / lesson.tasks.length) * 100
+            (completedTasks.length / tasks.length) * 100
         )
         : 0
 
@@ -265,6 +281,7 @@ function Lessons() {
         <div className="min-h-screen bg-slate-950 text-white p-4 md:p-8">
             <div className="max-w-5xl mx-auto">
 
+                {/* Назад к курсу */}
                 <button
                     onClick={() => navigate('/css')}
                     className="text-blue-400 hover:text-blue-300 cursor-pointer mb-6"
@@ -272,7 +289,7 @@ function Lessons() {
                     ← Назад к курсу
                 </button>
 
-                {/* Заголовок */}
+                {/* Заголовок урока */}
                 <div className="mb-8">
                     <p className="text-blue-400 text-sm mb-2">
                         CSS · Урок {lessonIndex + 1} из {lessons.length}
@@ -286,6 +303,7 @@ function Lessons() {
                         {lesson.description}
                     </p>
 
+                    {/* Прогресс */}
                     <div className="w-full bg-slate-800 rounded-full h-2 mt-5 overflow-hidden">
                         <div
                             className="bg-blue-500 h-2 rounded-full transition-all duration-300"
@@ -294,7 +312,7 @@ function Lessons() {
                     </div>
 
                     <p className="text-gray-400 text-sm mt-2">
-                        Выполнено заданий: {completedTasks.length} из {lesson.tasks.length}
+                        Выполнено заданий: {completedTasks.length} из {tasks.length}
                     </p>
                 </div>
 
@@ -333,7 +351,7 @@ function Lessons() {
                 )}
 
                 {/* Практика */}
-                {task && (
+                {task ? (
                     <section className="bg-slate-900 border border-slate-800 rounded-2xl p-6">
 
                         <div className="flex flex-wrap justify-between gap-3 mb-5">
@@ -342,7 +360,7 @@ function Lessons() {
                             </h2>
 
                             <span className="text-sm text-gray-400">
-                                Задание {taskIndex + 1} из {lesson.tasks.length}
+                                Задание {taskIndex + 1} из {tasks.length}
                             </span>
                         </div>
 
@@ -380,7 +398,7 @@ function Lessons() {
                             </div>
                         )}
 
-                        {/* CSS редактор */}
+                        {/* CSS-редактор */}
                         {task.type === 'code' && (
                             <>
                                 <div className="mb-6">
@@ -463,7 +481,7 @@ function Lessons() {
                                 disabled={!isCorrect}
                                 className="flex-1 bg-emerald-600 hover:bg-emerald-500 disabled:bg-slate-700 disabled:text-gray-500 disabled:cursor-not-allowed cursor-pointer py-3 rounded-xl font-semibold transition"
                             >
-                                {taskIndex === lesson.tasks.length - 1
+                                {taskIndex === tasks.length - 1
                                     ? 'Завершить урок'
                                     : 'Следующее задание →'
                                 }
@@ -483,6 +501,10 @@ function Lessons() {
                             </div>
                         )}
                     </section>
+                ) : (
+                    <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+                        В этом уроке пока нет заданий.
+                    </div>
                 )}
 
             </div>
