@@ -27,7 +27,7 @@ function Lesson() {
 
   if (isLocked) {
     return (
-      <div className="min-h-screen bg-[#0b1715] flex flex-col items-center justify-center text-white">
+      <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center text-white">
         <h1 className="text-2xl font-bold mb-4">
           🔒 Урок закрыт
         </h1>
@@ -38,7 +38,7 @@ function Lesson() {
 
         <button
           onClick={() => navigate('/html')}
-          className="rounded-xl bg-emerald-500 p-3 text-black font-bold cursor-pointer"
+          className="rounded-xl bg-blue-600 p-3 text-white font-bold cursor-pointer hover:bg-blue-500 transition"
         >
           Вернуться к урокам
         </button>
@@ -89,10 +89,13 @@ function Lesson() {
   const allCorrect = correct === lesson.tasks.length
 
   return (
-    <div className="min-h-screen bg-[#0b1715] px-4 py-8 text-white">
+    <div className="min-h-screen bg-slate-950 px-4 py-8 text-white">
       <div className="mx-auto max-w-4xl">
 
-        <button className="cursor-pointer" onClick={() => navigate('/html')}>
+        <button
+          className="text-blue-400 hover:text-blue-300 cursor-pointer transition"
+          onClick={() => navigate('/html')}
+        >
           ← Все уроки
         </button>
 
@@ -104,31 +107,31 @@ function Lesson() {
           {lesson.description}
         </p>
 
-        <h2 className="mb-4 text-xl font-bold text-emerald-400">
+        <h2 className="mb-4 text-xl font-bold text-blue-400">
           Теория
         </h2>
 
         {lesson.theory.map((part, questionId) => (
-          <div key={questionId} className="mb-4 rounded-xl bg-[#142521] p-4">
+          <div key={questionId} className="mb-4 rounded-xl bg-slate-900 border border-slate-800 p-4">
             <h3 className="mb-2 font-bold">{part.title}</h3>
             <p className="text-gray-300">{part.text}</p>
           </div>
         ))}
 
-        <h2 className="mb-4 mt-8 text-xl font-bold text-emerald-400">
+        <h2 className="mb-4 mt-8 text-xl font-bold text-blue-400">
           Пример
         </h2>
 
-        <pre className="overflow-x-auto rounded-xl bg-[#101c1b] p-4 text-emerald-300">
+        <pre className="overflow-x-auto rounded-xl bg-slate-900 border border-slate-800 p-4 text-blue-300">
           <code>{lesson.example}</code>
         </pre>
 
-        <h2 className="mb-4 mt-8 text-xl font-bold text-emerald-400">
+        <h2 className="mb-4 mt-8 text-xl font-bold text-blue-400">
           Практика
         </h2>
 
         {lesson.tasks.map((question, questionId) => (
-          <div key={question.id} className="mb-5 rounded-xl bg-[#142521] p-5">
+          <div key={question.id} className="mb-5 rounded-xl bg-slate-900 border border-slate-800 p-5">
 
             <h3 className="mb-2 font-bold">
               {question.title}
@@ -144,10 +147,10 @@ function Lesson() {
                   key={optionId}
                   disabled={checked}
                   onClick={() => handleAnswer(questionId, optionId)}
-                  className={`mb-2 block w-full cursor-pointer rounded-lg p-3 text-left ${
+                  className={`mb-2 block w-full cursor-pointer rounded-lg p-3 text-left border transition ${
                     answers[questionId] === optionId
-                      ? 'bg-emerald-600'
-                      : 'bg-[#101c1b] hover:bg-[#20372f]'
+                      ? 'bg-blue-600 border-blue-500 text-white'
+                      : 'bg-slate-950 border-slate-700 hover:border-blue-500 text-gray-300'
                   }`}
                 >
                   {option}
@@ -160,7 +163,7 @@ function Lesson() {
                 onChange={e => handleAnswer(questionId, e.target.value)}
                 placeholder="Напиши HTML-код..."
                 rows={6}
-                className="w-full rounded-lg bg-[#101c1b] p-4 font-mono text-emerald-300"
+                className="w-full rounded-lg bg-slate-950 border border-slate-700 p-4 font-mono text-blue-300 outline-none focus:border-blue-500"
               />
             )}
 
@@ -171,7 +174,11 @@ function Lesson() {
             )}
 
             {checked && (
-              <p className="mt-3 font-bold">
+              <p className={`mt-3 font-bold ${
+                checkAnswer(question, questionId)
+                  ? 'text-emerald-400'
+                  : 'text-red-400'
+              }`}>
                 {checkAnswer(question, questionId)
                   ? '✓ Правильно'
                   : '✗ Неправильно'}
@@ -189,12 +196,12 @@ function Lesson() {
                 ? answers[questionId] === undefined
                 : !String(answers[questionId] ?? question.starterCode ?? '').trim()
             )}
-            className="w-full cursor-pointer rounded-xl bg-emerald-500 p-4 font-bold text-black disabled:opacity-40"
+            className="w-full cursor-pointer rounded-xl bg-blue-600 hover:bg-blue-500 p-4 font-bold text-white transition disabled:opacity-40"
           >
             Проверить ответы
           </button>
         ) : (
-          <div className="mt-6 rounded-xl bg-[#142521] p-5 text-center">
+          <div className="mt-6 rounded-xl bg-slate-900 border border-slate-800 p-5 text-center">
 
             <h2 className="mb-3 text-xl font-bold">
               Результат: {correct} из {lesson.tasks.length}
@@ -203,7 +210,7 @@ function Lesson() {
             {allCorrect ? (
               <button
                 onClick={() => navigate('/html')}
-                className="rounded-xl cursor-pointer bg-emerald-500 p-3 font-bold text-black"
+                className="rounded-xl cursor-pointer bg-blue-600 hover:bg-blue-500 p-3 font-bold text-white transition"
               >
                 Вернуться к урокам
               </button>
@@ -213,7 +220,7 @@ function Lesson() {
                   setAnswers({})
                   setChecked(false)
                 }}
-                className="rounded-xl bg-emerald-500 cursor-pointer p-3 font-bold text-black"
+                className="rounded-xl bg-blue-600 hover:bg-blue-500 cursor-pointer p-3 font-bold text-white transition"
               >
                 Попробовать снова
               </button>

@@ -1,85 +1,123 @@
+
 import React from 'react'
 import { useNavigate } from 'react-router'
 import htmlCourse from './html.json'
 
 const Html = () => {
-  const navigate = useNavigate();
-  return (
-    <>
-<div className="min-h-screen w-full bg-[#0b1715] px-4 py-10 sm:px-8">
-      <h1
-        onClick={() => navigate('/course')}
-        className="
-          inline-flex items-center gap-2
-          text-emerald-300
-          font-semibold text-lg
-          cursor-pointer
-          transition-all duration-300
-          hover:text-emerald-200
-          hover:-translate-x-1
-          mb-6
-        "
-      >
-        <span>←</span>
-        Назад
-      </h1>
-    <div className="mx-auto max-w-5xl">
-        <h1 className="mb-3 text-center text-3xl sm:text-5xl font-bold text-emerald-300">
-            {htmlCourse.title}
-        </h1>
+    const navigate = useNavigate()
 
-        <p className="mb-10 text-center text-sm sm:text-base text-gray-400">
-            Изучай HTML с нуля и создавай собственные сайты
-        </p>
+    const lessons = htmlCourse.lessons || []
 
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        
-            {htmlCourse.lessons.map((lesson, index) => (
-                <div
-                    key={lesson.id}
-                    className="group relative overflow-hidden rounded-2xl border border-emerald-900/60 bg-[#142521] p-5 transition-all duration-300 hover:-translate-y-1 hover:border-emerald-400/60 hover:bg-[#19332b] hover:shadow-xl hover:shadow-emerald-950/40"
+    const totalTasks = lessons.reduce(
+        (total, lesson) => total + (lesson.tasks?.length || 0),
+        0
+    )
+
+    return (
+        <div className="min-h-screen bg-slate-950 text-white p-5 sm:p-8">
+            <div className="max-w-5xl mx-auto">
+
+                {/* Header */}
+                <button
+                    onClick={() => navigate('/course')}
+                    className="text-blue-400 cursor-pointer hover:text-blue-300 mb-6 transition"
                 >
+                    ← Назад к курсам
+                </button>
 
-                    <div className="mb-5 flex items-center justify-between">
+                {/* Course info */}
+                <div className="mb-10">
+                    <h1 className="text-4xl font-bold text-blue-400">
+                        {htmlCourse.title || 'Курс HTML'}
+                    </h1>
 
-                        <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-400/10 text-lg font-bold text-emerald-300">
-                            {String(index + 1).padStart(2, '0')}
-                        </span>
-
-                        <span className="rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-300">
-                            +{lesson.exp} EXP
-                        </span>
-
-                    </div>
-
-                    <h2 className="mb-3 text-xl font-bold text-white transition-colors group-hover:text-emerald-300">
-                        {lesson.title}
-                    </h2>
-
-                    <p className="mb-6 min-h-[48px] text-sm leading-6 text-gray-400">
-                        {lesson.description}
+                    <p className="text-slate-400 mt-3">
+                        {htmlCourse.description || 'Изучи HTML с нуля'}
                     </p>
 
-                    <div className="mb-5 h-1 w-full overflow-hidden rounded-full bg-[#263b34]">
-                        <div className="h-full w-0 rounded-full bg-emerald-400 transition-all duration-500 group-hover:w-full"></div>
+                    <div className="flex gap-4 mt-5 flex-wrap">
+                        <span className="bg-blue-500/10 text-blue-400 px-4 py-2 rounded-xl">
+                            HTML
+                        </span>
+
+                        <span className="bg-emerald-500/10 text-emerald-400 px-4 py-2 rounded-xl">
+                            {lessons.length} уроков
+                        </span>
+
+                        <span className="bg-yellow-500/10 text-yellow-400 px-4 py-2 rounded-xl">
+                            {totalTasks} заданий
+                        </span>
                     </div>
-
-                    <button
-                        onClick={() => navigate(`/html/lesson/${lesson.id}`)}
-                        className="w-full cursor-pointer rounded-xl bg-emerald-500 px-4 py-3 font-semibold text-[#092018] transition-all duration-300 hover:bg-emerald-400 active:scale-[0.97]"
-                    >
-                        Начать урок
-                    </button>
-
                 </div>
-            ))}
 
+                {/* Lessons */}
+                <div className="space-y-4">
+                    {lessons.map((lesson, index) => {
+                        const isCompleted =
+                            localStorage.getItem(
+                                `html_lesson_${lesson.id}_completed`
+                            ) === 'true'
+
+                        const previousLesson = lessons[index - 1]
+
+                        const isLocked =
+                            previousLesson &&
+                            localStorage.getItem(
+                                `html_lesson_${previousLesson.id}_completed`
+                            ) !== 'true'
+
+                        return (
+                            <button
+                                key={lesson.id}
+                                onClick={() => {
+                                    if (!isLocked) {
+                                        navigate(`/html/lesson/${lesson.id}`)
+                                    }
+                                }}
+                                disabled={!!isLocked}
+                                className={`w-full text-left flex items-center justify-between gap-3 border p-4 rounded-xl transition ${
+                                    isLocked
+                                        ? 'bg-slate-900/40 border-slate-800 opacity-50 cursor-not-allowed'
+                                        : 'bg-slate-900 border-slate-800 hover:bg-slate-800 hover:border-blue-500 cursor-pointer'
+                                }`}
+                            >
+                                <div className="flex items-center gap-3">
+                                    <span className={`w-10 h-10 shrink-0 flex items-center justify-center rounded-lg ${
+                                        isCompleted
+                                            ? 'bg-emerald-500/10 text-emerald-400'
+                                            : 'bg-blue-500/10 text-blue-400'
+                                    }`}>
+                                        {isCompleted ? '✓' : index + 1}
+                                    </span>
+
+                                    <div>
+                                        <p className="font-medium">
+                                            {lesson.title}
+                                        </p>
+
+                                        <p className="text-sm text-slate-400 mt-1">
+                                            {lesson.tasks?.length || 0} заданий · {lesson.exp || 0} EXP
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <span className="text-blue-400">
+                                    {isLocked ? '🔒' : '→'}
+                                </span>
+                            </button>
+                        )
+                    })}
+                </div>
+
+                {lessons.length === 0 && (
+                    <p className="text-slate-400 text-center py-10">
+                        Уроки пока не добавлены.
+                    </p>
+                )}
+
+            </div>
         </div>
-    </div>
-</div>
-
-    </>
-  )
+    )
 }
 
 export default Html
