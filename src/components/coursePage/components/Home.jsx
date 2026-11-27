@@ -4,7 +4,7 @@ import React from 'react'
 const Home = ({ currentUser, setActivePage }) => {
 
     return (
-        <section className="mx-auto w-[96%] sm:w-[90%] lg:w-[550px] mt-7 mb-8">
+        <section className="bg-black mx-auto w-[96%] sm:w-[90%] lg:w-[550px] mt-7 mb-8">
 
             {/* Приветствие */}
             <div className="mb-6 px-2">
